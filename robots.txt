@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://got-dragon.github.io/Game-Of-Thrones-encyclopedie-ultime/sitemap.xml
