@@ -453,6 +453,130 @@ textarea.avis-input{resize:vertical;min-height:90px}
 .w-lore h3{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(140,190,240,.6);margin-bottom:.7rem}
 .w-lore p{font-size:.9rem;line-height:1.65;color:rgba(200,224,248,.58);margin-bottom:.7rem}
 .w-lore p:last-child{margin-bottom:0}
+
+/* QUIZ BADGE */
+.quiz-badge-wrap{text-align:center;margin:.9rem 0 .2rem}
+.quiz-badge{
+  display:inline-flex;align-items:center;gap:.7rem;cursor:pointer;
+  background:linear-gradient(135deg,rgba(139,26,26,.6),rgba(80,10,10,.75));
+  border:2px solid rgba(220,80,40,.65);border-radius:5px;
+  padding:.6rem 1.6rem;
+  font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;
+  color:#f0c080;text-shadow:0 1px 8px rgba(220,120,40,.5);
+  box-shadow:0 0 20px rgba(200,60,20,.3),inset 0 0 12px rgba(0,0,0,.3);
+  transition:all .25s;animation:qzPulse 3s ease-in-out infinite;
+}
+.quiz-badge:hover{
+  border-color:rgba(220,130,40,.95);color:#ffd580;
+  box-shadow:0 0 36px rgba(210,80,20,.55);transform:translateY(-2px);
+}
+.qb-sword{font-size:1.2rem;animation:qzSpin 8s linear infinite;display:inline-block}
+@keyframes qzPulse{0%,100%{box-shadow:0 0 20px rgba(200,60,20,.3)}50%{box-shadow:0 0 38px rgba(220,80,20,.6)}}
+@keyframes qzSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* QUIZ OVERLAY */
+.qz-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(4,3,1,.9);backdrop-filter:blur(7px);
+  align-items:center;justify-content:center;padding:1rem;
+}
+.qz-overlay.open{display:flex;}
+.qz-box{
+  background:linear-gradient(160deg,rgba(20,13,4,.99),rgba(10,7,2,.99));
+  border:1px solid rgba(201,168,76,.38);border-radius:4px;
+  max-width:660px;width:100%;max-height:92vh;overflow-y:auto;
+  padding:2rem 2rem 1.6rem;position:relative;
+  box-shadow:0 0 70px rgba(0,0,0,.85);
+  animation:qzIn .3s ease;
+}
+@keyframes qzIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.qz-close{
+  position:absolute;top:.8rem;right:1rem;background:none;border:none;
+  color:rgba(201,168,76,.38);font-size:1.5rem;cursor:pointer;line-height:1;transition:color .2s;
+}
+.qz-close:hover{color:var(--gold);}
+
+/* QUIZ HEADER */
+.qz-head{text-align:center;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid rgba(201,168,76,.14);}
+.qz-title{font-family:'Cinzel Decorative',serif;font-size:clamp(.95rem,3vw,1.45rem);color:var(--gold);margin-bottom:.25rem}
+.qz-sub{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(201,168,76,.38)}
+
+/* LEVEL PICKER */
+.qz-levels{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:1rem 0 1.4rem}
+.qz-lvl-btn{
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.55rem 1.1rem;border:1px solid var(--border);background:transparent;
+  color:rgba(245,228,192,.42);cursor:pointer;border-radius:3px;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:.25rem;
+}
+.qz-lvl-btn:hover{border-color:var(--gold-d);color:var(--parch-m);}
+.qz-lvl-btn.sel{border-color:var(--gold);color:var(--gold-l);background:rgba(201,168,76,.09);}
+.qz-lvl-stars{font-size:.9rem;letter-spacing:.05rem}
+.qz-start-btn{
+  display:block;width:100%;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.22em;
+  text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.4);
+  color:var(--gold);padding:.7rem;cursor:pointer;border-radius:3px;transition:all .2s;margin-top:.5rem;
+}
+.qz-start-btn:hover{background:rgba(201,168,76,.22);border-color:var(--gold);}
+
+/* QUIZ GAME */
+.qz-prog-bar{height:3px;background:rgba(201,168,76,.1);border-radius:2px;margin-bottom:.35rem;overflow:hidden}
+.qz-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:2px;transition:width .4s ease}
+.qz-prog-txt{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,168,76,.32);text-align:right;margin-bottom:.9rem}
+.qz-q-num{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.3);margin-bottom:.3rem}
+.qz-q-text{font-family:'EB Garamond',serif;font-size:1.06rem;color:var(--parch);line-height:1.55;margin-bottom:1rem}
+.qz-answers{display:grid;gap:.45rem;margin-bottom:.85rem}
+.qz-ans{
+  background:rgba(245,232,200,.03);border:1px solid rgba(201,168,76,.18);
+  color:rgba(242,228,192,.72);font-family:'EB Garamond',serif;font-size:.93rem;
+  padding:.58rem .85rem;text-align:left;cursor:pointer;border-radius:2px;
+  transition:all .2s;display:flex;align-items:center;gap:.55rem;
+}
+.qz-ans:hover:not(:disabled){border-color:rgba(201,168,76,.52);color:var(--parch);background:rgba(201,168,76,.07)}
+.qz-ans.correct{border-color:rgba(60,160,60,.75);background:rgba(40,120,40,.18);color:#88ec88}
+.qz-ans.wrong{border-color:rgba(180,40,40,.65);background:rgba(140,20,20,.18);color:#ec8888}
+.qz-ans.reveal{border-color:rgba(60,160,60,.3);background:rgba(40,120,40,.05);color:rgba(100,200,100,.5)}
+.qz-ans:disabled{cursor:default}
+.qz-letter{font-family:'Cinzel',serif;font-size:.6rem;color:rgba(201,168,76,.38);flex-shrink:0;width:.9rem;text-align:center}
+.qz-fb{
+  min-height:2.4rem;margin-bottom:.75rem;padding:.5rem .7rem;
+  border-left:2px solid transparent;font-size:.87rem;line-height:1.5;
+  border-radius:0 2px 2px 0;display:none;
+}
+.qz-fb.show{display:block}
+.qz-fb.ok{border-color:rgba(60,160,60,.55);background:rgba(40,120,40,.09);color:rgba(130,220,130,.82)}
+.qz-fb.ko{border-color:rgba(180,40,40,.5);background:rgba(140,20,20,.09);color:rgba(220,130,130,.82)}
+.qz-next{
+  width:100%;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);color:var(--gold);
+  padding:.62rem;cursor:pointer;border-radius:2px;transition:all .2s;display:none;
+}
+.qz-next.show{display:block}
+.qz-next:hover{background:rgba(201,168,76,.2);border-color:var(--gold)}
+
+/* RESULTS */
+.qz-res{text-align:center;display:none}
+.qz-res.show{display:block}
+.qz-res-img{font-size:4rem;margin-bottom:.5rem;animation:qzBounce .6s ease}
+@keyframes qzBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.qz-score-big{font-family:'Cinzel Decorative',serif;font-size:3.2rem;color:var(--gold);line-height:1}
+.qz-score-sub{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-d);margin:.3rem 0 1rem}
+.qz-verdict{font-family:'EB Garamond',serif;font-size:1rem;color:rgba(242,228,192,.68);line-height:1.6;max-width:440px;margin:0 auto 1.3rem}
+.qz-restart{
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);color:var(--gold);
+  padding:.62rem 1.8rem;cursor:pointer;border-radius:2px;transition:all .2s;margin-bottom:1.2rem;
+}
+.qz-restart:hover{background:rgba(201,168,76,.2);border-color:var(--gold)}
+.qz-detail-row{display:flex;align-items:center;gap:.5rem;padding:.3rem 0;border-bottom:1px solid rgba(201,168,76,.06);font-size:.82rem;color:rgba(242,228,192,.5)}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;top:-10px;width:8px;height:8px;border-radius:1px;animation:confettiFall linear forwards;pointer-events:none;z-index:600}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* SNOW */
+.snow-flake{position:fixed;top:-10px;color:rgba(200,230,255,.7);font-size:1.2rem;animation:snowFall linear forwards;pointer-events:none;z-index:600}
+@keyframes snowFall{0%{transform:translateY(0) rotate(0deg);opacity:.8}100%{transform:translateY(105vh) rotate(180deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -461,6 +585,14 @@ textarea.avis-input{resize:vertical;min-height:90px}
   <h1>Le Trône de Fer</h1>
   <p class="sub">Encyclopédie Complète — Les 5 Intégrales</p>
   <p class="site-desc">Encyclopédie de Game of Thrones permettant de classifier les personnages et les évènements de manière à faciliter la compréhension de l’œuvre globale.</p>
+
+  <div class="quiz-badge-wrap">
+    <div class="quiz-badge" onclick="openQuiz()">
+      <span class="qb-sword">&#9876;</span>
+      <span>QUIZ &mdash; Teste tes connaissances sur GoT</span>
+      <span class="qb-sword" style="animation-direction:reverse">&#9876;</span>
+    </div>
+  </div>
 </header>
 
 <div class="spoiler-banner" id="spoilerBanner" onclick="dismissSpoiler()">
@@ -2695,5 +2827,371 @@ render();
 document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener('copy', event => event.preventDefault());
 </script>
+
+<div class="qz-overlay" id="qzOverlay" onclick="qzBgClick(event)">
+  <div class="qz-box" id="qzBox">
+    <button class="qz-close" onclick="closeQuiz()">&#x2715;</button>
+    <div class="qz-head">
+      <div class="qz-title">&#9876; Le Tr&ocirc;ne de Fer &mdash; Quiz &#9876;</div>
+      <div class="qz-sub">Choisis ton niveau et prouve ta valeur</div>
+    </div>
+
+    <!-- Ecran choix niveau -->
+    <div id="qzLevelScreen">
+      <div class="qz-levels">
+        <div class="qz-lvl-btn" onclick="qzSelectLevel('debutant',this)">
+          <span class="qz-lvl-stars">&#9733;</span>
+          <span>D&eacute;butant</span>
+        </div>
+        <div class="qz-lvl-btn" onclick="qzSelectLevel('intermediaire',this)">
+          <span class="qz-lvl-stars">&#9733;&#9733;</span>
+          <span>Interm&eacute;diaire</span>
+        </div>
+        <div class="qz-lvl-btn" onclick="qzSelectLevel('expert',this)">
+          <span class="qz-lvl-stars">&#9733;&#9733;&#9733;</span>
+          <span>Expert</span>
+        </div>
+      </div>
+      <button class="qz-start-btn" id="qzStartBtn" onclick="qzStart()" disabled>
+        Commencer &rarr;
+      </button>
+    </div>
+
+    <!-- Ecran jeu -->
+    <div id="qzGameScreen" style="display:none">
+      <div class="qz-prog-bar"><div class="qz-prog-fill" id="qzFill" style="width:0%"></div></div>
+      <div class="qz-prog-txt" id="qzProgTxt">0 / 5</div>
+      <div class="qz-q-num" id="qzQNum">Question 1 / 5</div>
+      <div class="qz-q-text" id="qzQText"></div>
+      <div class="qz-answers" id="qzAnswers"></div>
+      <div class="qz-fb" id="qzFb"></div>
+      <button class="qz-next" id="qzNextBtn" onclick="qzNext()">Suivant &rarr;</button>
+    </div>
+
+    <!-- Ecran resultats -->
+    <div class="qz-res" id="qzResScreen">
+      <div class="qz-res-img" id="qzResImg"></div>
+      <div class="qz-score-big" id="qzScoreBig"></div>
+      <div class="qz-score-sub" id="qzScoreSub"></div>
+      <div class="qz-verdict" id="qzVerdict"></div>
+      <button class="qz-restart" onclick="qzBackToLevels()">&#x21BA; Changer de niveau</button>
+      <div id="qzDetail"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+var QZ = {
+  level: null,
+  current: 0,
+  score: 0,
+  answers: []
+};
+
+var QZ_DATA = {
+  debutant: [
+    {
+      q: "Qui est Joffrey BARATHEON\u00a0?",
+      a: ["Un roi cruel", "Un vieux mestre sage", "L\u2019\u00e9cuyer d\u2019Arya Stark"],
+      ok: 0,
+      expl: "Joffrey Baratheon est le roi cruel qui r\u00e8gne sur les Sept Couronnes apr\u00e8s la mort de Robert. Son r\u00e8gne de terreur le rend d\u00e9test\u00e9 de tous."
+    },
+    {
+      q: "Quel nom correspond \u00e0 cette description\u00a0: \u00ab\u00a0C\u2019est un nain intelligent, d\u00e9test\u00e9 par son p\u00e8re et sa s\u0153ur\u00a0\u00bb\u00a0?",
+      a: ["Ned Stark", "La Montagne", "Tyrion Lannister"],
+      ok: 2,
+      expl: "Tyrion Lannister, le nain de la famille Lannister, est un esprit brillant m\u00e9pris\u00e9 par son p\u00e8re Tywin et sa s\u0153ur Cersei. Il survivra \u00e0 tous gr\u00e2ce \u00e0 son intelligence."
+    },
+    {
+      q: "Qui est Daenerys TARGARYEN\u00a0?",
+      a: ["Une sorci\u00e8re dothrakie", "La reine des dragons", "Une esclave affranchie"],
+      ok: 1,
+      expl: "Daenerys Targaryen est la M\u00e8re des Dragons, derni\u00e8re h\u00e9riti\u00e8re de la maison Targaryen. Elle na\u00eet \u00e0 Peyredragon et grandit en exil avant de conqu\u00e9rir son destin."
+    },
+    {
+      q: "Quelles cr\u00e9atures sont li\u00e9es aux Targaryen\u00a0?",
+      a: ["Des licornes", "Des bousiers", "Des dragons"],
+      ok: 2,
+      expl: "Les Targaryen sont li\u00e9s aux dragons depuis la Conqu\u00eate d\u2019Aegon. Ces cr\u00e9atures colossales sont leur force et leur symb\u00f4le \u2014 et la source de leur puissance."
+    },
+    {
+      q: "Que pensent les fans de la fin de la derni\u00e8re saison\u00a0?",
+      a: ["C\u2019est une horreur\u00a0!", "Elle les laisse indiff\u00e9rents", "C\u2019est magnifique\u00a0!"],
+      ok: 0,
+      expl: "La saison 8 reste l\u2019une des fins de s\u00e9rie les plus critiqu\u00e9es de l\u2019histoire de la t\u00e9l\u00e9vision. La p\u00e9tition pour la refaire a recueilli plus d\u2019un million de signatures."
+    }
+  ],
+  intermediaire: [
+    {
+      q: "\u00c0 quelle phrase fait r\u00e9f\u00e9rence le pr\u00e9nom Hodor\u00a0?",
+      a: ["All the doors", "Close the door", "Hold the door"],
+      ok: 2,
+      expl: "\u00ab\u00a0Hold the door\u00a0\u00bb \u2014 Bran, en voyageant dans le pass\u00e9, a ordonn\u00e9 \u00e0 Willis de tenir la porte. Ce traumatisme a r\u00e9duit son vocabulaire \u00e0 ce seul mot\u00a0: Hodor."
+    },
+    {
+      q: "Comment meurt Oberyn MARTELL\u00a0?",
+      a: ["Mordu par une vip\u00e8re", "\u00c9cras\u00e9 par la Montagne", "Empoisonn\u00e9 par une manticore"],
+      ok: 1,
+      expl: "Oberyn Martell ralentit volontairement son coup fatal pour forcer Gregor Clegane \u00e0 avouer. Cette h\u00e9sitation lui co\u00fbte la vie\u00a0: la Montagne lui broie le cr\u00e2ne."
+    },
+    {
+      q: "Quel est le pr\u00e9nom de \u00ab\u00a0La Montagne\u00a0\u00bb\u00a0?",
+      a: ["Sandor CLEGANE", "Maegor CLEGANE", "Gregor CLEGANE"],
+      ok: 2,
+      expl: "Gregor Clegane, dit \u00ab\u00a0la Montagne\u00a0\u00bb, est le fr\u00e8re a\u00een\u00e9 du Chien. Connu pour sa brutalit\u00e9 extr\u00eame, il est l\u2019un des guerriers les plus redout\u00e9s de Westeros."
+    },
+    {
+      q: "Comment meurt Viserys TARGARYEN\u00a0?",
+      a: ["Jet\u00e9 dans le feu", "Br\u00fbl\u00e9 par de l\u2019or fondu", "Br\u00fbl\u00e9 par un dragon"],
+      ok: 1,
+      expl: "Khal Drogo verse de l\u2019or fondu sur la t\u00eate de Viserys en lui offrant la \u00ab\u00a0couronne d\u2019or\u00a0\u00bb qu\u2019il r\u00e9clamait \u2014 une mort aussi symbolique qu\u2019atroce."
+    },
+    {
+      q: "Depuis quand Robert BARATHEON r\u00e8gne-t-il au d\u00e9but de la s\u00e9rie\u00a0?",
+      a: ["Environ 7 ans", "Environ 15 ans", "Il vient d\u2019acc\u00e9der au tr\u00f4ne"],
+      ok: 1,
+      expl: "Robert Baratheon r\u00e8gne depuis environ 15 ans au d\u00e9but de la s\u00e9rie. Il a renvers\u00e9 Aerys II le Fou lors de la r\u00e9bellion de Robert, avec l\u2019aide des Stark et des Tully."
+    }
+  ],
+  expert: [
+    {
+      q: "Quel est le pr\u00e9nom de Hodor jeune\u00a0?",
+      a: ["Willy", "Willys", "Will"],
+      ok: 1,
+      expl: "Le vrai pr\u00e9nom de Hodor est Willys \u2014 dans les livres. Son surnom \u00ab\u00a0Hodor\u00a0\u00bb est la d\u00e9formation de \u00ab\u00a0Hold the door\u00a0\u00bb, traumatisme caus\u00e9 par le voyage temporel de Bran."
+    },
+    {
+      q: "Qu\u2019est-ce que le Trident\u00a0?",
+      a: ["Un fleuve", "Une cr\u00e9ature", "Une \u00e9poque"],
+      ok: 0,
+      expl: "Le Trident est un fleuve de Westeros. C\u2019est sur ses rives que Robert Baratheon affronta Rhaegar Targaryen en combat singulier \u2014 bataille d\u00e9cisive de la r\u00e9bellion."
+    },
+    {
+      q: "De qui Duncan le Grand est-il l\u2019\u00e9cuyer\u00a0?",
+      a: ["Allan de l\u2019Arbre-Saul", "Arly de l\u2019Arbre-Sous", "Arlan de l\u2019Arbre-Sous"],
+      ok: 2,
+      expl: "Dunk (Duncan le Grand) est l\u2019ancien \u00e9cuyer de ser Arlan de l\u2019Arbre-Sous (Ser Arlan of Pennytree), un vieux chevalier errant dont il a h\u00e9rit\u00e9 le cheval et l\u2019armure."
+    },
+    {
+      q: "Egg (Aegon V Targaryen) est-il\u00a0?",
+      a: [
+        "Le grand-p\u00e8re du roi fou (Aerys II Targaryen)",
+        "L\u2019arri\u00e8re-grand-p\u00e8re du roi fou (Aerys II Targaryen)",
+        "Aucun des deux"
+      ],
+      ok: 0,
+      expl: "Aegon V (Egg) est le grand-p\u00e8re d\u2019Aerys II le Fou. Son fils Jaehaerys II puis son petit-fils Aerys II lui succ\u00e8dent sur le Tr\u00f4ne de Fer."
+    },
+    {
+      q: "Daenerys et Jon Snow sont\u00a0?",
+      a: ["S\u0153ur et fr\u00e8re", "Cousine et cousin", "Tante et neveu"],
+      ok: 2,
+      expl: "Jon Snow est Aegon Targaryen, fils de Rhaegar Targaryen et Lyanna Stark. Rhaegar \u00e9tant le fr\u00e8re de Daenerys, Jon est son neveu \u2014 non son cousin."
+    }
+  ]
+};
+
+var QZ_RESULTS = {
+  5: {
+    img: "\uD83D\uDC51",
+    verdict: "Vous pouvez vous asseoir sur le tr\u00f4ne\u00a0!",
+    effect: "confetti"
+  },
+  4: {
+    img: "\uD83C\uDF1F",
+    verdict: "Bravo\u00a0! Vous \u00eates digne de diriger une maison\u00a0!",
+    effect: "crown"
+  },
+  3: {
+    img: "\uD83C\uDF1F",
+    verdict: "Bravo\u00a0! Vous \u00eates digne de diriger une maison\u00a0!",
+    effect: "crown"
+  },
+  2: {
+    img: "\uD83D\uDD2A",
+    verdict: "Vous \u00eates un d\u00e9serteur de la Garde de Nuit\u00a0! Attention \u00e0 votre t\u00eate, on pourrait bien vous la raccourcir\u00a0!",
+    effect: "axe"
+  },
+  1: {
+    img: "\uD83D\uDD2A",
+    verdict: "Vous \u00eates un d\u00e9serteur de la Garde de Nuit\u00a0! Attention \u00e0 votre t\u00eate, on pourrait bien vous la raccourcir\u00a0!",
+    effect: "axe"
+  },
+  0: {
+    img: "\u2744\uFE0F",
+    verdict: "On va vous jeter au-del\u00e0 du Mur manu militari. Vous n\u2019\u00eates pas digne d\u2019\u00eatre parmi nous\u00a0!",
+    effect: "snow"
+  }
+};
+
+function openQuiz() {
+  document.getElementById("qzOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  qzBackToLevels();
+}
+
+function closeQuiz() {
+  document.getElementById("qzOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function qzBgClick(e) {
+  if (e.target === document.getElementById("qzOverlay")) closeQuiz();
+}
+
+function qzSelectLevel(lvl, el) {
+  QZ.level = lvl;
+  document.querySelectorAll(".qz-lvl-btn").forEach(function(b) {
+    b.classList.remove("sel");
+  });
+  el.classList.add("sel");
+  document.getElementById("qzStartBtn").disabled = false;
+}
+
+function qzStart() {
+  if (!QZ.level) return;
+  QZ.current = 0;
+  QZ.score = 0;
+  QZ.answers = [];
+  document.getElementById("qzLevelScreen").style.display = "none";
+  document.getElementById("qzResScreen").classList.remove("show");
+  document.getElementById("qzGameScreen").style.display = "block";
+  qzShowQ();
+}
+
+function qzShowQ() {
+  var data = QZ_DATA[QZ.level];
+  var q = data[QZ.current];
+  var total = data.length;
+  var pct = Math.round(QZ.current / total * 100);
+  document.getElementById("qzFill").style.width = pct + "%";
+  document.getElementById("qzProgTxt").textContent = QZ.current + " / " + total;
+  document.getElementById("qzQNum").textContent = "Question " + (QZ.current + 1) + " / " + total;
+  document.getElementById("qzQText").textContent = q.q;
+  var letters = ["A", "B", "C"];
+  document.getElementById("qzAnswers").innerHTML = q.a.map(function(ans, i) {
+    return "<button class=\"qz-ans\" onclick=\"qzAnswer(" + i + ")\">"
+      + "<span class=\"qz-letter\">" + letters[i] + "</span>"
+      + ans + "</button>";
+  }).join("");
+  document.getElementById("qzFb").className = "qz-fb";
+  document.getElementById("qzFb").textContent = "";
+  document.getElementById("qzNextBtn").className = "qz-next";
+}
+
+function qzAnswer(idx) {
+  var q = QZ_DATA[QZ.level][QZ.current];
+  var btns = document.querySelectorAll(".qz-ans");
+  btns.forEach(function(b) { b.disabled = true; });
+  var isOk = idx === q.ok;
+  if (isOk) QZ.score++;
+  QZ.answers.push({ q: q.q, ok: isOk, chosen: idx, correct: q.ok });
+  btns.forEach(function(b, i) {
+    if (i === q.ok) b.classList.add("correct");
+    else if (i === idx && !isOk) b.classList.add("wrong");
+    else b.classList.add("reveal");
+  });
+  var fb = document.getElementById("qzFb");
+  fb.textContent = (isOk ? "\u2713 Bonne r\u00e9ponse \u2014 " : "\u2717 Mauvaise r\u00e9ponse \u2014 ") + q.expl;
+  fb.className = "qz-fb show " + (isOk ? "ok" : "ko");
+  var nxt = document.getElementById("qzNextBtn");
+  nxt.className = "qz-next show";
+  nxt.textContent = (QZ.current + 1 < QZ_DATA[QZ.level].length)
+    ? "Suivant \u2192" : "Voir mes r\u00e9sultats \u2192";
+}
+
+function qzNext() {
+  QZ.current++;
+  if (QZ.current >= QZ_DATA[QZ.level].length) {
+    qzShowResults();
+  } else {
+    qzShowQ();
+  }
+}
+
+function qzShowResults() {
+  document.getElementById("qzGameScreen").style.display = "none";
+  var res = document.getElementById("qzResScreen");
+  res.classList.add("show");
+  var total = QZ_DATA[QZ.level].length;
+  document.getElementById("qzFill").style.width = "100%";
+  document.getElementById("qzProgTxt").textContent = total + " / " + total;
+  var sc = QZ.score;
+  var r = QZ_RESULTS[sc];
+  document.getElementById("qzResImg").textContent = r.img;
+  document.getElementById("qzScoreBig").textContent = sc + " / " + total;
+  var lvlNames = { debutant: "D\u00e9butant", intermediaire: "Interm\u00e9diaire", expert: "Expert" };
+  document.getElementById("qzScoreSub").textContent = lvlNames[QZ.level] + " \u2014 " + Math.round(sc / total * 100) + "\u00a0%";
+  document.getElementById("qzVerdict").textContent = r.verdict;
+  var detail = "<div style=\"margin-bottom:.6rem;font-family:Cinzel,serif;font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,168,76,.3)\">D\u00e9tail</div>";
+  QZ.answers.forEach(function(a, i) {
+    detail += "<div class=\"qz-detail-row\">"
+      + "<span style=\"color:" + (a.ok ? "rgba(100,200,100,.8)" : "rgba(200,100,100,.8)") + "\">" + (a.ok ? "\u2713" : "\u2717") + "</span>"
+      + "<span style=\"color:rgba(201,168,76,.4);font-family:Cinzel,serif;font-size:.5rem\">Q" + (i + 1) + ".</span>"
+      + "<span style=\"flex:1\">" + a.q + "</span>"
+      + "</div>";
+  });
+  document.getElementById("qzDetail").innerHTML = detail;
+  if (r.effect === "confetti") qzConfetti();
+  else if (r.effect === "snow") qzSnow();
+}
+
+function qzBackToLevels() {
+  QZ.level = null;
+  QZ.current = 0;
+  QZ.score = 0;
+  QZ.answers = [];
+  document.getElementById("qzLevelScreen").style.display = "block";
+  document.getElementById("qzGameScreen").style.display = "none";
+  document.getElementById("qzResScreen").classList.remove("show");
+  document.getElementById("qzStartBtn").disabled = true;
+  document.querySelectorAll(".qz-lvl-btn").forEach(function(b) { b.classList.remove("sel"); });
+}
+
+function qzConfetti() {
+  var colors = ["#f0c040","#e05020","#c83030","#40a060","#4060c0","#c040a0"];
+  for (var i = 0; i < 80; i++) {
+    (function(i) {
+      setTimeout(function() {
+        var el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.style.cssText = "left:" + Math.random() * 100 + "vw;"
+          + "background:" + colors[Math.floor(Math.random() * colors.length)] + ";"
+          + "width:" + (6 + Math.random() * 8) + "px;"
+          + "height:" + (6 + Math.random() * 8) + "px;"
+          + "animation-duration:" + (2 + Math.random() * 2) + "s;"
+          + "animation-delay:0s;";
+        document.body.appendChild(el);
+        setTimeout(function() { el.remove(); }, 4500);
+      }, i * 40);
+    })(i);
+  }
+}
+
+function qzSnow() {
+  for (var i = 0; i < 40; i++) {
+    (function(i) {
+      setTimeout(function() {
+        var el = document.createElement("div");
+        el.className = "snow-flake";
+        el.textContent = "\u2744";
+        el.style.cssText = "left:" + Math.random() * 100 + "vw;"
+          + "font-size:" + (1 + Math.random()) + "rem;"
+          + "animation-duration:" + (3 + Math.random() * 3) + "s;"
+          + "animation-delay:0s;";
+        document.body.appendChild(el);
+        setTimeout(function() { el.remove(); }, 6500);
+      }, i * 80);
+    })(i);
+  }
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") closeQuiz();
+});
+</script>
+
 </body>
 </html>
