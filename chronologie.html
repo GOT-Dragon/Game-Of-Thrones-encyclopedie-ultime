@@ -21,7 +21,22 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3.2vw,2.1rem);colo
 .frise-topbar{display:flex;align-items:center;justify-content:space-between;padding:.45rem 1.2rem .2rem}
 .frise-label{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-d);opacity:.6}
 .frise-hint{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,168,76,.28);font-style:italic}
-.frise-scroll{overflow-x:auto;overflow-y:hidden;cursor:grab;user-select:none}
+
+/* ── TOGGLE BUTTON ── */
+.frise-toggle{
+  font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-d);background:transparent;border:1px solid rgba(201,168,76,.3);
+  padding:.22rem .75rem;cursor:pointer;transition:all .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:.35rem;border-radius:1px;
+}
+.frise-toggle:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,168,76,.06)}
+.frise-toggle .toggle-arrow{display:inline-block;transition:transform .35s ease;font-style:normal}
+.frise-outer.collapsed .frise-toggle .toggle-arrow{transform:rotate(180deg)}
+
+/* ── COLLAPSED STATE ── */
+.frise-scroll{overflow-x:auto;overflow-y:hidden;cursor:grab;user-select:none;
+  max-height:290px;transition:max-height .4s cubic-bezier(.4,0,.2,1), opacity .35s ease;opacity:1}
+.frise-outer.collapsed .frise-scroll{max-height:0;overflow:hidden;opacity:0}
 .frise-scroll:active{cursor:grabbing}
 .frise-scroll::-webkit-scrollbar{height:3px}
 .frise-scroll::-webkit-scrollbar-track{background:rgba(201,168,76,.05)}
@@ -117,7 +132,9 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3.2vw,2.1rem);colo
 .ev-bot:hover .ev-dot{transform:scale(1.5);box-shadow:0 0 10px var(--mk-clr)}
 .ev-bot:hover .ev-tick{opacity:.8}
 /* filters */
-.filters-bar{background:rgba(12,9,3,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);padding:.5rem 1.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.38rem}
+.filters-bar{background:rgba(12,9,3,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);padding:.5rem 1.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.38rem;
+  max-height:80px;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1), padding .35s ease, opacity .3s ease;opacity:1}
+.filters-bar.collapsed{max-height:0;padding-top:0;padding-bottom:0;opacity:0;border:none}
 .filters-label{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);opacity:.6;white-space:nowrap}
 .era-pill{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.11em;text-transform:uppercase;padding:.18rem .55rem;border-radius:1px;cursor:pointer;border:1px solid transparent;background:transparent;transition:all .2s;white-space:nowrap;opacity:.48}
 .era-pill:hover{opacity:.85}
@@ -203,10 +220,14 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3.2vw,2.1rem);colo
 </header>
 
 <!-- FRISE HORIZONTALE -->
-<div class="frise-outer">
+<div class="frise-outer" id="friseOuter">
   <div class="frise-topbar">
     <span class="frise-label">Frise chronologique</span>
-    <span class="frise-hint">⟵ faites glisser · cliquez une ère pour filtrer ⟶</span>
+    <span class="frise-hint" id="friseHint">⟵ faites glisser · cliquez une ère pour filtrer ⟶</span>
+    <button class="frise-toggle" id="friseToggleBtn" onclick="toggleFrise()" title="Réduire / développer la frise">
+      <span class="toggle-arrow">▲</span>
+      <span id="toggleLabel">Réduire</span>
+    </button>
   </div>
   <div class="frise-scroll" id="friseScroll">
     <div class="frise-inner" id="friseInner">
@@ -216,7 +237,7 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3.2vw,2.1rem);colo
 </div>
 
 <!-- FILTRES PILLS -->
-<nav class="filters-bar">
+<nav class="filters-bar" id="filtersBar">
   <span class="filters-label">Ère :</span>
   <button class="era-pill ep-all active"    data-era="all">Toutes</button>
   <button class="era-pill ep-aube"          data-era="aube">Aube des Âges</button>
@@ -670,7 +691,33 @@ EVENTS.forEach(ev => {
   inner.appendChild(m);
 });
 
-// Drag scroll
+// ══════════════════════════════════════════
+// TOGGLE FRISE
+// ══════════════════════════════════════════
+let friseCollapsed = false;
+
+function toggleFrise() {
+  friseCollapsed = !friseCollapsed;
+  const outer   = document.getElementById('friseOuter');
+  const filters = document.getElementById('filtersBar');
+  const label   = document.getElementById('toggleLabel');
+  const hint    = document.getElementById('friseHint');
+
+  if (friseCollapsed) {
+    outer.classList.add('collapsed');
+    filters.classList.add('collapsed');
+    label.textContent = 'Développer';
+    if (hint) hint.style.opacity = '0';
+  } else {
+    outer.classList.remove('collapsed');
+    filters.classList.remove('collapsed');
+    label.textContent = 'Réduire';
+    if (hint) hint.style.opacity = '';
+  }
+}
+
+// ══════════════════════════════════════════
+// DRAG SCROLL
 const scroll = document.getElementById('friseScroll');
 let isDown=false, startX, sl;
 scroll.addEventListener('mousedown', e=>{isDown=true;startX=e.pageX-scroll.offsetLeft;sl=scroll.scrollLeft});
