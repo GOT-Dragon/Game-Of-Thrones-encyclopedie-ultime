@@ -128,6 +128,7 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.3rem,4vw,2.7rem);colo
 
 /* ══ MAP ══ */
 #tab-map{display:none}
+#tab-list{display:none}
 .maplayout{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 118px);min-height:520px}
 @media(max-width:800px){.maplayout{grid-template-columns:1fr;height:auto}}
 .mapcont{position:relative;background:#08100c;overflow:hidden;border-right:1px solid var(--border)}
@@ -631,7 +632,8 @@ textarea.avis-input{resize:vertical;min-height:90px}
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('list',this)">📜 Personnages</button>
+  <button class="tab active" onclick="switchTab('chrono',this)">🗓 Chronologie</button>
+  <button class="tab" onclick="switchTab('list',this)">📜 Personnages</button>
   <button class="tab" onclick="switchTab('map',this)">🗺 Carte</button>
   <button class="tab" onclick="switchTab('feu',this)">🔥 Feu &amp; Sang</button>
   <button class="tab" onclick="switchTab('hotd',this)">🐉 House of the Dragon</button>
@@ -643,6 +645,10 @@ textarea.avis-input{resize:vertical;min-height:90px}
 </div>
 
 <!-- ══════ TAB PERSONNAGES ══════ -->
+<div id="tab-chrono" style="height:calc(100vh - 90px);overflow:hidden;margin:0;padding:0;">
+  <iframe src="chronologie.html" style="width:100%;height:100%;border:none;display:block;" title="Chronologie de Westeros" loading="lazy"></iframe>
+</div>
+
 <div id="tab-list">
   <div class="toolbar">
     <div class="sw"><input id="si" type="text" placeholder="Chercher un personnage…" oninput="onSearch()"/></div>
@@ -2930,7 +2936,7 @@ function renderNord(){
 function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  ['list','map','resume','tv','feu','hotd','dunk','nord','avis'].forEach(t=>{
+  ['chrono','list','map','resume','tv','feu','hotd','dunk','nord','avis'].forEach(t=>{
     document.getElementById('tab-'+t).style.display=t===id?'block':'none';
   });
   document.getElementById('tab-map').style.display=id==='map'?'block':'none';
@@ -2942,6 +2948,7 @@ function switchTab(id,btn){
   if(id==='hotd')renderHotD();
   if(id==='nord')renderNord();
   if(id==='avis')renderAvis();
+  if(id==='chrono')document.getElementById('tab-chrono').style.display='block';
 }
 
 // ── SPOILER BANNER ──────────────────────────────────────────────────────────

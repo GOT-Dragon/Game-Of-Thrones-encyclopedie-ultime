@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chronologie de Westeros — Encyclopédie Game of Thrones</title>
+<meta name="description" content="Frise chronologique complète de Westeros : de l'Aube des Âges à Game of Thrones.">
+<link rel="canonical" href="https://got-dragon.github.io/Game-Of-Thrones-encyclopedie-ultime/chronologie.html">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-l:#e8d08a;--gold-d:#7a5c1e;--parch:#f2e4c0;--parch-m:#d9c48a;--parch-d:#c4a85a;--stone:#1a1508;--panel:rgba(20,15,5,0.97);--border:rgba(201,168,76,0.2);--border-b:rgba(201,168,76,0.5);--c-aube:#4a9a7a;--c-hiver:#7ab0d4;--c-heros:#c9a84c;--c-andal:#7a90c0;--c-valyria:#d07840;--c-conquete:#c94c4c;--c-targaryen:#b03030;--c-danse:#e05050;--c-rebellion:#7090b0;--c-got:#a04040}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--stone);background-image:radial-gradient(ellipse 70% 35% at 50% 0%,rgba(120,20,20,.14) 0%,transparent 55%);min-height:100vh;font-family:'EB Garamond',serif;color:var(--parch);overflow-x:hidden}
+header{text-align:center;padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--gold-d);background:linear-gradient(180deg,rgba(80,15,15,.2) 0%,transparent 100%)}
+.site-back{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);text-decoration:none;margin-bottom:.8rem;transition:color .2s;opacity:.7}
+.site-back:hover{color:var(--gold);opacity:1}
+.orn{font-size:1.3rem;color:var(--gold-d);letter-spacing:.5em;opacity:.5;display:block;margin-bottom:.3rem}
+h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3.2vw,2.1rem);color:var(--gold);text-shadow:0 2px 24px rgba(201,168,76,.3);letter-spacing:.04em}
+.sub{font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d);margin-top:.4rem}
+.frise-outer{background:rgba(8,6,2,.97);border-bottom:2px solid rgba(201,168,76,.2);position:sticky;top:0;z-index:70;box-shadow:0 6px 32px rgba(0,0,0,.8)}
+.frise-topbar{display:flex;align-items:center;justify-content:space-between;padding:.45rem 1.2rem .2rem}
+.frise-label{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-d);opacity:.6}
+.frise-hint{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,168,76,.28);font-style:italic}
+.frise-scroll{overflow-x:auto;overflow-y:hidden;cursor:grab;user-select:none}
+.frise-scroll:active{cursor:grabbing}
+.frise-scroll::-webkit-scrollbar{height:3px}
+.frise-scroll::-webkit-scrollbar-track{background:rgba(201,168,76,.05)}
+.frise-scroll::-webkit-scrollbar-thumb{background:var(--gold-d);border-radius:2px}
+
+/* ── FRISE CANVAS ── */
+/* axis sits at y=148 inside a 280px tall canvas                  */
+/* events ABOVE axis: label+date above the tick, tick goes down   */
+/* events BELOW axis: tick goes up, label+date below the dot      */
+.frise-inner{position:relative;width:2600px;height:280px;padding:0 24px}
+
+/* Axis line */
+.frise-axis{position:absolute;left:24px;right:24px;top:148px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.18) 3%,rgba(201,168,76,.55) 50%,rgba(201,168,76,.18) 97%,transparent)}
+
+/* Era band — sits ON the axis */
+.era-seg{position:absolute;top:148px;height:22px;cursor:pointer;transition:filter .25s,opacity .25s;opacity:.8}
+.era-seg:hover{opacity:1;filter:brightness(1.25)}
+.era-seg.era-active{opacity:1;filter:brightness(1.4)}
+.era-seg-fill{height:100%;border-radius:0 0 2px 2px;
+  border-bottom:2px solid var(--seg-clr);
+  background:linear-gradient(180deg,rgba(var(--seg-rgb),.22),rgba(var(--seg-rgb),.05))}
+/* Era label centred inside the band */
+.era-seg-name{
+  position:absolute;top:3px;left:0;right:0;
+  font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--seg-clr);text-align:center;white-space:nowrap;overflow:hidden;
+  opacity:.85;pointer-events:none;padding:0 4px}
+
+/* ── MARKERS ABOVE axis (odd index) ── */
+/* structure: .ev-top  → flex col, bottom-anchored at axis         */
+/*   .ev-lbl-box  (label + date, sits on top)                      */
+/*   .ev-tick     (line going down to axis)                         */
+/*   .ev-dot      (sits exactly on axis)                            */
+.ev-top{
+  position:absolute;bottom:calc(100% - 148px); /* anchor bottom to axis */
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;z-index:6;transition:opacity .2s;
+}
+.ev-top .ev-lbl-box{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:2px;
+}
+.ev-top .ev-date{
+  font-family:'Cinzel',serif;font-size:.43rem;letter-spacing:.1em;
+  color:var(--mk-clr);opacity:.65;white-space:nowrap;line-height:1.2;
+}
+.ev-top .ev-lbl{
+  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;
+  color:var(--mk-clr);white-space:nowrap;line-height:1.3;text-align:center;
+  max-width:140px;overflow:hidden;text-overflow:ellipsis;
+}
+.ev-top.major .ev-lbl{font-size:.53rem;font-weight:600}
+.ev-top .ev-tick{width:1px;background:var(--mk-clr);opacity:.45;flex-shrink:0;transition:opacity .2s}
+.ev-top .ev-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--mk-clr);border:2px solid var(--stone);
+  flex-shrink:0;margin-top:-1px;
+  box-shadow:0 0 0 1px var(--mk-clr);
+  transition:transform .2s,box-shadow .2s;
+}
+.ev-top.major .ev-dot{width:11px;height:11px;box-shadow:0 0 0 2px var(--mk-clr)}
+.ev-top:hover .ev-dot{transform:scale(1.5);box-shadow:0 0 10px var(--mk-clr)}
+.ev-top:hover .ev-tick{opacity:.8}
+.ev-top:hover .ev-lbl{opacity:1}
+
+/* ── MARKERS BELOW axis (even index) ── */
+.ev-bot{
+  position:absolute;top:148px;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;z-index:6;transition:opacity .2s;
+}
+.ev-bot .ev-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--mk-clr);border:2px solid var(--stone);
+  flex-shrink:0;margin-top:-4px;
+  box-shadow:0 0 0 1px var(--mk-clr);
+  transition:transform .2s,box-shadow .2s;
+}
+.ev-bot.major .ev-dot{width:11px;height:11px;box-shadow:0 0 0 2px var(--mk-clr)}
+.ev-bot .ev-tick{width:1px;background:var(--mk-clr);opacity:.45;flex-shrink:0;transition:opacity .2s;margin-top:1px}
+.ev-bot .ev-lbl-box{display:flex;flex-direction:column;align-items:center;margin-top:3px}
+.ev-bot .ev-date{
+  font-family:'Cinzel',serif;font-size:.43rem;letter-spacing:.1em;
+  color:var(--mk-clr);opacity:.65;white-space:nowrap;line-height:1.2;
+}
+.ev-bot .ev-lbl{
+  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;
+  color:var(--mk-clr);white-space:nowrap;line-height:1.3;text-align:center;
+  max-width:140px;overflow:hidden;text-overflow:ellipsis;
+}
+.ev-bot.major .ev-lbl{font-size:.53rem;font-weight:600}
+.ev-bot:hover .ev-dot{transform:scale(1.5);box-shadow:0 0 10px var(--mk-clr)}
+.ev-bot:hover .ev-tick{opacity:.8}
+/* filters */
+.filters-bar{background:rgba(12,9,3,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);padding:.5rem 1.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.38rem}
+.filters-label{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);opacity:.6;white-space:nowrap}
+.era-pill{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.11em;text-transform:uppercase;padding:.18rem .55rem;border-radius:1px;cursor:pointer;border:1px solid transparent;background:transparent;transition:all .2s;white-space:nowrap;opacity:.48}
+.era-pill:hover{opacity:.85}
+.era-pill.active{opacity:1}
+.ep-all{border-color:var(--gold-d);color:var(--gold)}.ep-all.active{background:rgba(201,168,76,.1);border-color:var(--gold)}
+.ep-aube{color:var(--c-aube);border-color:var(--c-aube)}.ep-aube.active{background:rgba(74,154,122,.1)}
+.ep-hiver{color:var(--c-hiver);border-color:var(--c-hiver)}.ep-hiver.active{background:rgba(122,176,212,.1)}
+.ep-heros{color:var(--c-heros);border-color:var(--c-heros)}.ep-heros.active{background:rgba(201,168,76,.1)}
+.ep-andal{color:var(--c-andal);border-color:var(--c-andal)}.ep-andal.active{background:rgba(122,144,192,.1)}
+.ep-valyria{color:var(--c-valyria);border-color:var(--c-valyria)}.ep-valyria.active{background:rgba(208,120,64,.1)}
+.ep-conquete{color:var(--c-conquete);border-color:var(--c-conquete)}.ep-conquete.active{background:rgba(201,76,76,.1)}
+.ep-targaryen{color:var(--c-targaryen);border-color:var(--c-targaryen)}.ep-targaryen.active{background:rgba(176,48,48,.1)}
+.ep-danse{color:var(--c-danse);border-color:var(--c-danse)}.ep-danse.active{background:rgba(224,80,80,.1)}
+.ep-rebellion{color:var(--c-rebellion);border-color:var(--c-rebellion)}.ep-rebellion.active{background:rgba(112,144,176,.1)}
+.ep-got{color:var(--c-got);border-color:var(--c-got)}.ep-got.active{background:rgba(160,64,64,.1)}
+/* timeline vertical */
+.timeline-wrap{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem 5rem;position:relative}
+.timeline-wrap::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%);background:linear-gradient(180deg,transparent,rgba(201,168,76,.15) 5%,rgba(201,168,76,.35) 20%,rgba(201,168,76,.35) 80%,rgba(201,168,76,.15) 95%,transparent)}
+@media(max-width:700px){.timeline-wrap::before{left:20px}}
+.era-section{transition:opacity .3s}
+.era-section.era-hidden{display:none}
+.era-header{display:flex;align-items:center;gap:1.2rem;margin:2.5rem 0 1.3rem;position:relative;z-index:2}
+.era-header::before,.era-header::after{content:'';flex:1;height:1px}
+.era-header::before{background:linear-gradient(90deg,transparent,var(--era-clr,var(--gold-d)))}
+.era-header::after{background:linear-gradient(270deg,transparent,var(--era-clr,var(--gold-d)))}
+.era-header-inner{background:var(--stone);padding:.35rem 1rem;border:1px solid var(--era-clr,var(--gold-d));text-align:center;white-space:nowrap}
+.era-name{font-family:'Cinzel Decorative',serif;font-size:clamp(.68rem,1.8vw,.92rem);color:var(--era-clr,var(--gold))}
+.era-span{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,228,192,.3);display:block;margin-top:.12rem}
+.event{display:grid;grid-template-columns:1fr 52px 1fr;gap:0;margin-bottom:1.3rem;transition:opacity .3s}
+.event.hidden{display:none}
+.event.left .event-card{grid-column:1;grid-row:1;text-align:right}
+.event.left .event-node{grid-column:2;grid-row:1}
+.event.left .event-spacer{grid-column:3;grid-row:1}
+.event.right .event-spacer{grid-column:1;grid-row:1}
+.event.right .event-node{grid-column:2;grid-row:1}
+.event.right .event-card{grid-column:3;grid-row:1;text-align:left}
+.event-node{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:.82rem;position:relative;z-index:2}
+.node-dot{width:11px;height:11px;border-radius:50%;background:var(--era-clr,var(--gold-d));border:2px solid var(--stone);box-shadow:0 0 0 2px var(--era-clr,var(--gold-d)),0 0 10px var(--era-clr,transparent);flex-shrink:0;transition:transform .2s}
+.node-line{width:1px;flex:1;min-height:14px;background:linear-gradient(180deg,var(--era-clr,var(--gold-d)),transparent);opacity:.15;margin-top:3px}
+.event-card{background:var(--panel);border:1px solid var(--border);padding:.9rem 1rem;border-radius:1px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;animation:fadeUp .38s ease both}
+.event-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--era-clr,var(--gold-d)),transparent);opacity:0;transition:opacity .2s}
+.event-card:hover{border-color:var(--era-clr,var(--border-b));transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.event-card:hover::before{opacity:1}
+.event.left .event-card{border-right:2px solid var(--era-clr,var(--gold-d))}
+.event.right .event-card{border-left:2px solid var(--era-clr,var(--gold-d))}
+.event.left .event-card::after{content:'';position:absolute;top:.95rem;right:-27px;width:27px;height:1px;background:linear-gradient(90deg,var(--era-clr,var(--gold-d)),transparent);opacity:.35}
+.event.right .event-card::after{content:'';position:absolute;top:.95rem;left:-27px;width:27px;height:1px;background:linear-gradient(270deg,var(--era-clr,var(--gold-d)),transparent);opacity:.35}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.event-date{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--era-clr,var(--gold-d));margin-bottom:.22rem;display:block}
+.event-title{font-family:'Cinzel',serif;font-size:.84rem;color:var(--parch);line-height:1.3;margin-bottom:.38rem}
+.event-summary{font-size:.84rem;line-height:1.55;color:rgba(242,228,192,.62);margin-bottom:.4rem}
+.event-detail{font-size:.79rem;line-height:1.52;color:rgba(242,228,192,.4);font-style:italic;border-top:1px solid rgba(201,168,76,.1);margin-top:.4rem;padding-top:0;max-height:0;overflow:hidden;transition:max-height .35s ease,padding-top .3s}
+.event-card.open .event-detail{max-height:400px;padding-top:.4rem}
+.event-hint{font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(201,168,76,.22);margin-top:.35rem;display:block}
+.event-tags{display:flex;flex-wrap:wrap;gap:.18rem;margin-top:.38rem}
+.event.right .event-tags{justify-content:flex-start}
+.event.left .event-tags{justify-content:flex-end}
+.etag{font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.09em;text-transform:uppercase;padding:.1rem .35rem;border-radius:1px;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.17);color:rgba(201,168,76,.48)}
+.etag.maj{background:rgba(201,76,76,.08);border-color:rgba(201,76,76,.3);color:rgba(220,130,100,.7)}
+@media(max-width:700px){
+  .event{grid-template-columns:38px 1fr;grid-template-rows:auto}
+  .event.left .event-card,.event.right .event-card{grid-column:2;grid-row:1;text-align:left;border-left:2px solid var(--era-clr,var(--gold-d));border-right:none}
+  .event.left .event-node,.event.right .event-node{grid-column:1;grid-row:1}
+  .event.left .event-spacer,.event.right .event-spacer{display:none}
+  .event.left .event-tags,.event.right .event-tags{justify-content:flex-start}
+  .event.left .event-card::after,.event.right .event-card::after{display:none}
+  .timeline-wrap::before{left:19px}
+}
+.bottom-nav{text-align:center;padding:2rem;border-top:1px solid var(--border)}
+.btn-back{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);text-decoration:none;border:1px solid var(--border);padding:.5rem 1.3rem;transition:all .2s}
+.btn-back:hover{border-color:var(--gold);color:var(--gold)}
+.event{opacity:0;animation:none}
+.event.visible{animation:fadeUp .42s ease both}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="site-back">← Retour à l'Encyclopédie</a>
+  <span class="orn">⚔ ✦ ⚔</span>
+  <h1>Chronologie de Westeros</h1>
+  <p class="sub">De l'Aube des Âges au Trône de Fer</p>
+</header>
+
+<!-- FRISE HORIZONTALE -->
+<div class="frise-outer">
+  <div class="frise-topbar">
+    <span class="frise-label">Frise chronologique</span>
+    <span class="frise-hint">⟵ faites glisser · cliquez une ère pour filtrer ⟶</span>
+  </div>
+  <div class="frise-scroll" id="friseScroll">
+    <div class="frise-inner" id="friseInner">
+      <div class="frise-axis"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTRES PILLS -->
+<nav class="filters-bar">
+  <span class="filters-label">Ère :</span>
+  <button class="era-pill ep-all active"    data-era="all">Toutes</button>
+  <button class="era-pill ep-aube"          data-era="aube">Aube des Âges</button>
+  <button class="era-pill ep-hiver"         data-era="hiver">Long Hiver</button>
+  <button class="era-pill ep-heros"         data-era="heros">Âge des Héros</button>
+  <button class="era-pill ep-andal"         data-era="andal">Invasion Andal</button>
+  <button class="era-pill ep-valyria"       data-era="valyria">Valyria</button>
+  <button class="era-pill ep-conquete"      data-era="conquete">Conquête d'Aegon</button>
+  <button class="era-pill ep-targaryen"     data-era="targaryen">Rois Targaryen</button>
+  <button class="era-pill ep-danse"         data-era="danse">Danse des Dragons</button>
+  <button class="era-pill ep-rebellion"     data-era="rebellion">Rébellion de Robert</button>
+  <button class="era-pill ep-got"           data-era="got">Le Trône de Fer</button>
+</nav>
+
+<!-- TIMELINE VERTICALE -->
+<main class="timeline-wrap" id="timeline">
+
+  <div class="era-section" data-era="aube">
+    <div class="era-header" style="--era-clr:var(--c-aube)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-aube)">L'Aube des Âges</div><span class="era-span">≈ 12 000 avC – 10 000 avC</span></div></div>
+    <div class="event left" data-era="aube" style="--era-clr:var(--c-aube)">
+      <div class="event-card">
+        <span class="event-date">≈ 12 000 avC</span>
+        <div class="event-title">Arrivée des Premiers Hommes</div>
+        <div class="event-summary">Les Premiers Hommes franchissent le Bras de Dorne et peuplent Westeros, entrant en guerre avec les Enfants de la Forêt.</div>
+        <div class="event-detail">Porteurs d'armes en bronze, ils abattent les arbres-cœur sacrés des Enfants. Les Enfants tentent de briser le Bras de Dorne pour stopper les migrations, créant les Îlots du Doigt de Pierres.</div>
+        <span class="event-hint">▼ cliquer pour développer</span>
+        <div class="event-tags"><span class="etag maj">Fondateur</span><span class="etag">Premiers Hommes</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="aube" style="--era-clr:var(--c-aube)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">≈ 10 000 avC</span>
+        <div class="event-title">Le Pacte de l'Île aux Visages</div>
+        <div class="event-summary">Après deux millénaires de guerre, Premiers Hommes et Enfants de la Forêt concluent une paix durable. Les forêts aux Enfants, les terres ouvertes aux Hommes.</div>
+        <div class="event-detail">Ce Pacte inaugure l'Âge des Héros. Des Green Men, gardiens mi-humains mi-Enfants, veillent sur l'Île aux Visages depuis lors.</div>
+        <div class="event-tags"><span class="etag maj">Fondateur</span><span class="etag">Paix</span><span class="etag">Enfants de la Forêt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="heros">
+    <div class="era-header" style="--era-clr:var(--c-heros)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-heros)">L'Âge des Héros</div><span class="era-span">≈ 10 000 avC – 8 000 avC</span></div></div>
+    <div class="event left" data-era="heros" style="--era-clr:var(--c-heros)">
+      <div class="event-card">
+        <span class="event-date">≈ 9 000 avC</span>
+        <div class="event-title">Fondation de Winterfell — Brandon le Bâtisseur</div>
+        <div class="event-summary">Brandon Stark érige Winterfell, fondant une lignée de près de huit millénaires. Il est aussi crédité de la construction future du Mur de glace avec l'aide des géants.</div>
+        <div class="event-tags"><span class="etag maj">Fondation</span><span class="etag">Maison Stark</span><span class="etag">Winterfell</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="heros" style="--era-clr:var(--c-heros)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">≈ 8 500 avC</span>
+        <div class="event-title">Lann le Rusé — Castral Roc &amp; Durran — Accalmie</div>
+        <div class="event-summary">Lann le Rusé, aventurier aux cheveux dorés, chasse la famille Casterly de Castral Roc par la ruse. Durran Âme-de-Tempête épouse une fille des dieux et fonde Accalmie.</div>
+        <div class="event-tags"><span class="etag">Fondation</span><span class="etag">Maison Lannister</span><span class="etag">Maison Baratheon</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="hiver">
+    <div class="era-header" style="--era-clr:var(--c-hiver)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-hiver)">Le Long Hiver</div><span class="era-span">≈ 8 000 avC</span></div></div>
+    <div class="event left" data-era="hiver" style="--era-clr:var(--c-hiver)">
+      <div class="event-card">
+        <span class="event-date">≈ 8 000 avC</span>
+        <div class="event-title">Création des Marcheurs Blancs</div>
+        <div class="event-summary">Les Enfants de la Forêt plantent un éclat de dragonglass dans le cœur d'un Premier Homme — créant une arme qui échappe à tout contrôle. Le premier Marcheur devient le Roi de la Nuit.</div>
+        <div class="event-detail">Leaf, l'une des Enfants de la Forêt, agit par désespoir. Les Marcheurs créent des armées de Wights à partir des corps des vaincus.</div>
+        <div class="event-tags"><span class="etag maj">Cataclysme</span><span class="etag">Marcheurs Blancs</span><span class="etag">Roi de la Nuit</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="hiver" style="--era-clr:var(--c-hiver)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">≈ 8 000 avC</span>
+        <div class="event-title">La Longue Nuit — Azor Ahai &amp; Illumination</div>
+        <div class="event-summary">L'obscurité envahit Westeros pour une génération. Azor Ahai forge l'épée Illumination en la trempant dans le sang de Nissa Nissa. Hommes et Enfants s'unissent pour la Bataille pour l'Aube.</div>
+        <div class="event-tags"><span class="etag maj">Cataclysme</span><span class="etag">Azor Ahai</span><span class="etag">Illumination</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="hiver" style="--era-clr:var(--c-hiver)">
+      <div class="event-card">
+        <span class="event-date">≈ 8 000 avC</span>
+        <div class="event-title">Construction du Mur &amp; Fondation de la Garde de Nuit</div>
+        <div class="event-summary">Brandon le Bâtisseur érige le Mur — 300 lieues, 700 pieds de haut — avec des sorts anciens tissés dans la glace. La Garde de Nuit est fondée pour le défendre, sans allégeance à aucun roi.</div>
+        <div class="event-tags"><span class="etag maj">Fondateur</span><span class="etag">Le Mur</span><span class="etag">Garde de Nuit</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="andal">
+    <div class="era-header" style="--era-clr:var(--c-andal)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-andal)">L'Invasion Andal</div><span class="era-span">≈ 6 000 avC – 4 000 avC</span></div></div>
+    <div class="event right" data-era="andal" style="--era-clr:var(--c-andal)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">≈ 6 000 avC</span>
+        <div class="event-title">Les Andals traversent la Mer Étroite</div>
+        <div class="event-summary">Venus de l'Andalos avec armes en fer et Foi des Sept, les Andals conquièrent les six royaumes du Sud. Seul le Nord résiste, préservant les Anciens Dieux et la culture des Premiers Hommes.</div>
+        <div class="event-detail">Supérieurs militairement (fer contre bronze), les Andals écrasent les Premiers Hommes. La Neck défendue par les Hommes des Marais protège le Nord.</div>
+        <div class="event-tags"><span class="etag maj">Invasion</span><span class="etag">Foi des Sept</span><span class="etag">Andals</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="valyria">
+    <div class="era-header" style="--era-clr:var(--c-valyria)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-valyria)">La Domination de Valyria</div><span class="era-span">≈ 5 000 avC – 102 avC</span></div></div>
+    <div class="event left" data-era="valyria" style="--era-clr:var(--c-valyria)">
+      <div class="event-card">
+        <span class="event-date">≈ 5 000 avC</span>
+        <div class="event-title">Essor de l'Empire Valyrien</div>
+        <div class="event-summary">Les Valyriens domestiquent les dragons et bâtissent le plus grand empire du monde connu. Ils forgent l'acier valyrien grâce à la magie des flammes. Les Targaryen sont l'une des familles dragonmaîtres.</div>
+        <div class="event-tags"><span class="etag maj">Empire</span><span class="etag">Valyria</span><span class="etag">Dragons</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="valyria" style="--era-clr:var(--c-valyria)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">114 avC</span>
+        <div class="event-title">La Prophétie de Daenys — Les Targaryen fuient à Peyredragon</div>
+        <div class="event-summary">Daenys la Rêveuse prophétise la destruction de Valyria. Son père Lord Aenar transfère toute la famille à Peyredragon avec cinq dragons, dont Balerion le Terreur Noire.</div>
+        <div class="event-tags"><span class="etag maj">Prophétie</span><span class="etag">Targaryen</span><span class="etag">Peyredragon</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="valyria" style="--era-clr:var(--c-valyria)">
+      <div class="event-card">
+        <span class="event-date">102 avC</span>
+        <div class="event-title">La Mère des Flammes — Destruction de Valyria</div>
+        <div class="event-summary">Volcans, séismes et mers de feu rasent la péninsule valyrique en une nuit. L'empire le plus puissant du monde s'effondre. La péninsule devient la Cité de Cendres, innavigable.</div>
+        <div class="event-tags"><span class="etag maj">Cataclysme</span><span class="etag">Effondrement de Valyria</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="conquete">
+    <div class="era-header" style="--era-clr:var(--c-conquete)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-conquete)">La Conquête d'Aegon</div><span class="era-span">2 avC – 2 apC</span></div></div>
+    <div class="event right" data-era="conquete" style="--era-clr:var(--c-conquete)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">2 avC</span>
+        <div class="event-title">Aegon débarque — Le Champ de Feu &amp; Harrenhal</div>
+        <div class="event-summary">Aegon Ier, Visenya et Rhaenys débarquent avec trois dragons. Balerion, Vhagar et Meraxes incinèrent l'armée combinée des rois Lannister et Gardener. Harren le Noir est brûlé vif dans Harrenhal.</div>
+        <div class="event-detail">Plus de 4 000 hommes périssent au Champ de Feu. Harrenhal, achevé après 40 ans de travaux, est rendu inhabitable. Ses pierres tordues par le feu restent visibles des siècles plus tard.</div>
+        <div class="event-tags"><span class="etag maj">Bataille</span><span class="etag">Balerion</span><span class="etag">Harrenhal</span><span class="etag">Champ de Feu</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="conquete" style="--era-clr:var(--c-conquete)">
+      <div class="event-card">
+        <span class="event-date">1 apC</span>
+        <div class="event-title">Couronnement d'Aegon Ier — Le Trône de Fer est forgé</div>
+        <div class="event-summary">Aegon est couronné à Fort Aegon, futur cœur de Port-Réal. Le Trône de Fer est forgé par Balerion à partir de 1 000 épées des vaincus — intentionnellement inconfortable.</div>
+        <div class="event-detail">La légende veut que quiconque n'est pas digne de régner soit blessé par le trône. L'an 1 de la Conquête marque le début du calendrier officiel de Westeros.</div>
+        <div class="event-tags"><span class="etag maj">Fondateur</span><span class="etag">Trône de Fer</span><span class="etag">Port-Réal</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="targaryen">
+    <div class="era-header" style="--era-clr:var(--c-targaryen)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-targaryen)">Les Rois Targaryen</div><span class="era-span">1 apC – 129 apC</span></div></div>
+    <div class="event right" data-era="targaryen" style="--era-clr:var(--c-targaryen)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">42 apC</span>
+        <div class="event-title">Maegor le Cruel — Répression de la Foi Militante</div>
+        <div class="event-summary">Maegor Ier écrase la Foi Militante avec une violence extrême. Il est retrouvé mort sur le Trône de Fer, vidé de son sang — suicide, meurtre ou punition divine, la vérité reste inconnue.</div>
+        <div class="event-tags"><span class="etag">Maegor le Cruel</span><span class="etag">Foi Militante</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="targaryen" style="--era-clr:var(--c-targaryen)">
+      <div class="event-card">
+        <span class="event-date">101 apC</span>
+        <div class="event-title">Grand Conseil de Harrenhal — La graine de la Danse</div>
+        <div class="event-summary">À la mort de Jaehaerys Ier (55 ans de règne), un Grand Conseil désigne Viserys Ier comme héritier, établissant le précédent qu'un homme prime une femme à la succession — graine de la Danse des Dragons.</div>
+        <div class="event-tags"><span class="etag maj">Précédent</span><span class="etag">Jaehaerys Ier</span><span class="etag">Grand Conseil</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="targaryen" style="--era-clr:var(--c-targaryen)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">≈ 209 apC</span>
+        <div class="event-title">L'Époque de Dunk &amp; Egg</div>
+        <div class="event-summary">Ser Duncan le Grand et le jeune prince Aegon Targaryen (dit Egg, futur Aegon V) parcourent Westeros ensemble. Aegon V tentera plus tard de réveiller des dragons à Summerhall — et y mourra (259 apC).</div>
+        <div class="event-tags"><span class="etag">Dunk &amp; Egg</span><span class="etag">Aegon V</span><span class="etag">Summerhall</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="targaryen" style="--era-clr:var(--c-targaryen)">
+      <div class="event-card">
+        <span class="event-date">262 apC</span>
+        <div class="event-title">Aerys II — Le Roi Fou</div>
+        <div class="event-summary">Aerys II Targaryen monte sur le Trône avec des promesses de réforme. Traumatisé après sa captivité, il sombre dans la paranoïa et l'obsession du feu, brûlant vifs ses opposants.</div>
+        <div class="event-tags"><span class="etag maj">Règne</span><span class="etag">Aerys II</span><span class="etag">Roi Fou</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="danse">
+    <div class="era-header" style="--era-clr:var(--c-danse)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-danse)">La Danse des Dragons</div><span class="era-span">129 apC – 131 apC</span></div></div>
+    <div class="event right" data-era="danse" style="--era-clr:var(--c-danse)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">129 apC</span>
+        <div class="event-title">Mort de Viserys Ier — Rhaenyra (Noirs) vs Aegon II (Verts)</div>
+        <div class="event-summary">Alicent Hightower fait couronner son fils Aegon II, ignorant le testament désignant Rhaenyra comme héritière. La guerre civile éclate. C'est l'histoire de House of the Dragon.</div>
+        <div class="event-tags"><span class="etag maj">Guerre civile</span><span class="etag">Rhaenyra</span><span class="etag">Aegon II</span><span class="etag">HotD</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="danse" style="--era-clr:var(--c-danse)">
+      <div class="event-card">
+        <span class="event-date">130 apC</span>
+        <div class="event-title">Lac-Œil-de-Dieu — Daemon &amp; Aemond périssent</div>
+        <div class="event-summary">Daemon sur Caraxès affronte Aemond sur Vhagar. Les deux cavaliers et leurs dragons s'abîment dans le lac. Deux des plus grands dragons du monde disparaissent en un seul combat.</div>
+        <div class="event-tags"><span class="etag maj">Bataille</span><span class="etag">Daemon</span><span class="etag">Caraxès</span><span class="etag">Vhagar</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="danse" style="--era-clr:var(--c-danse)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">131 apC</span>
+        <div class="event-title">Fin de la Danse — Quasi-extinction des dragons</div>
+        <div class="event-summary">Rhaenyra est dévorée par Sunfyre. Aegon II meurt empoisonné. Aegon III monte sur le Trône. En deux ans, 17 des 20 dragons Targaryen ont péri. Les derniers s'étiolent et meurent en 153 apC.</div>
+        <div class="event-tags"><span class="etag maj">Fin de guerre</span><span class="etag">Extinction des dragons</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="rebellion">
+    <div class="era-header" style="--era-clr:var(--c-rebellion)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-rebellion)">La Rébellion de Robert</div><span class="era-span">282 apC – 283 apC</span></div></div>
+    <div class="event left" data-era="rebellion" style="--era-clr:var(--c-rebellion)">
+      <div class="event-card">
+        <span class="event-date">282 apC</span>
+        <div class="event-title">Enlèvement de Lyanna Stark — La guerre éclate</div>
+        <div class="event-summary">Rhaegar Targaryen enlève (ou s'enfuit avec) Lyanna, fiancée de Robert. Aerys brûle vifs le père et le frère de Ned Stark. Les grandes maisons se révoltent.</div>
+        <div class="event-detail">La réalité sera révélée bien plus tard : Lyanna avait choisi Rhaegar. Elle mourra en accouchant de leur fils secret — Jon Snow, alias Aegon Targaryen, héritier légitime du Trône.</div>
+        <div class="event-tags"><span class="etag maj">Déclencheur</span><span class="etag">Lyanna Stark</span><span class="etag">Rhaegar</span><span class="etag">Jon Snow</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="rebellion" style="--era-clr:var(--c-rebellion)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">283 apC</span>
+        <div class="event-title">Bataille du Trident — Robert tue Rhaegar</div>
+        <div class="event-summary">Robert Baratheon affronte Rhaegar en duel dans les gués de la Trident et le tue de son marteau de guerre. Le rubis de la cuirasse de Rhaegar se disperse dans la rivière.</div>
+        <div class="event-tags"><span class="etag maj">Bataille décisive</span><span class="etag">Robert Baratheon</span><span class="etag">Rhaegar</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="rebellion" style="--era-clr:var(--c-rebellion)">
+      <div class="event-card">
+        <span class="event-date">283 apC</span>
+        <div class="event-title">Jaime tue Aerys — Robert Ier couronné — Jon Snow naît</div>
+        <div class="event-summary">Jaime poignarde le Roi Fou pour sauver Port-Réal du feu grégeois — et gagne son surnom de Régicide. Robert est couronné. Lyanna meurt en donnant naissance à Jon Snow à la Tour de la Joie.</div>
+        <div class="event-detail">Ned Stark cache l'identité de Jon, le présentant comme son bâtard. Daenerys naît sur Peyredragon pendant une tempête, sa mère mourant en couches. Les derniers Targaryen partent en exil.</div>
+        <div class="event-tags"><span class="etag maj">Fondateur</span><span class="etag">Jaime — Régicide</span><span class="etag">Robert Ier</span><span class="etag">Jon Snow</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+  </div>
+
+  <div class="era-section" data-era="got">
+    <div class="era-header" style="--era-clr:var(--c-got)"><div class="era-header-inner"><div class="era-name" style="color:var(--c-got)">Le Trône de Fer</div><span class="era-span">298 apC – 305 apC</span></div></div>
+    <div class="event right" data-era="got" style="--era-clr:var(--c-got)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">298 apC — Saison 1</span>
+        <div class="event-title">Ned Stark à Port-Réal — Décapitation</div>
+        <div class="event-summary">Robert nomme Ned Main du Roi. Ned découvre la bâtardise de Joffrey. Arrêté, il est exécuté sur ordre de Joffrey — déclenchant la Guerre des Cinq Rois.</div>
+        <div class="event-tags"><span class="etag maj">S1</span><span class="etag">Ned Stark</span><span class="etag">Joffrey</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="got" style="--era-clr:var(--c-got)">
+      <div class="event-card">
+        <span class="event-date">299–300 apC — Saisons 1–3</span>
+        <div class="event-title">Guerre des Cinq Rois &amp; Noces Pourpres</div>
+        <div class="event-summary">Cinq prétendants au trône déchirent Westeros. Les Noces Pourpres concluent la guerre du Nord : Robb Stark, Catelyn et leurs officiers massacrés par les Frey sous le toit de l'hospitalité.</div>
+        <div class="event-tags"><span class="etag maj">S1–S3</span><span class="etag">Noces Pourpres</span><span class="etag">Robb Stark</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="got" style="--era-clr:var(--c-got)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">305 apC — Saison 6</span>
+        <div class="event-title">Cersei détruit le Grand Septe de Baelor</div>
+        <div class="event-summary">Cersei fait exploser le Grand Septe avec du feu grégeois, tuant Margaery, Loras Tyrell et des centaines de nobles. Tommen se suicide. Cersei est couronnée reine des Sept Royaumes.</div>
+        <div class="event-tags"><span class="etag maj">S6</span><span class="etag">Cersei</span><span class="etag">Feu grégeois</span></div>
+      </div>
+    </div>
+    <div class="event left" data-era="got" style="--era-clr:var(--c-got)">
+      <div class="event-card">
+        <span class="event-date">305 apC — Saison 8</span>
+        <div class="event-title">Arya Stark tue le Roi de la Nuit</div>
+        <div class="event-summary">Lors de la Bataille de Winterfell, Arya bondit des ombres et plante une dague de dragonglass dans le cœur du Roi de la Nuit. Tous les Wights s'effondrent. La menace de 8 000 ans est anéantie en une nuit.</div>
+        <div class="event-tags"><span class="etag maj">S8</span><span class="etag">Arya Stark</span><span class="etag">Roi de la Nuit</span></div>
+      </div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-spacer"></div>
+    </div>
+    <div class="event right" data-era="got" style="--era-clr:var(--c-got)">
+      <div class="event-spacer"></div>
+      <div class="event-node"><div class="node-dot"></div><div class="node-line"></div></div>
+      <div class="event-card">
+        <span class="event-date">305 apC — Final Saison 8</span>
+        <div class="event-title">Jon tue Daenerys — Bran élu Roi — Drogon fond le Trône</div>
+        <div class="event-summary">Daenerys brûle Port-Réal malgré la reddition. Jon la poignarde. Drogon fait fondre le Trône de Fer. Un Grand Conseil élit Bran Stark roi des Six Royaumes. Sansa reine du Nord indépendant.</div>
+        <div class="event-tags"><span class="etag maj">Final S8</span><span class="etag">Bran Stark</span><span class="etag">Jon Snow</span><span class="etag">Fin de l'ère Targaryen</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="btn-back">← Retour à l'Encyclopédie</a>
+</nav>
+
+<script>
+const FRISE_W = 2552, OFFSET = 24;
+function px(pct){ return OFFSET + (pct/100)*FRISE_W; }
+
+const ERAS = [
+  {id:'aube',      label:'Aube des Âges',       clr:'#4a9a7a', rgb:'74,154,122',  s:0,  e:8  },
+  {id:'heros',     label:'Âge des Héros',        clr:'#c9a84c', rgb:'201,168,76',  s:8,  e:16 },
+  {id:'hiver',     label:'Long Hiver',            clr:'#7ab0d4', rgb:'122,176,212', s:16, e:22 },
+  {id:'andal',     label:'Invasion Andal',        clr:'#7a90c0', rgb:'122,144,192', s:22, e:32 },
+  {id:'valyria',   label:'Valyria',               clr:'#d07840', rgb:'208,120,64',  s:32, e:45 },
+  {id:'conquete',  label:"Conquête d'Aegon",      clr:'#c94c4c', rgb:'201,76,76',   s:45, e:50 },
+  {id:'targaryen', label:'Rois Targaryen',         clr:'#b03030', rgb:'176,48,48',   s:50, e:68 },
+  {id:'danse',     label:'Danse des Dragons',      clr:'#e05050', rgb:'224,80,80',   s:68, e:74 },
+  {id:'rebellion', label:'Rébellion de Robert',    clr:'#7090b0', rgb:'112,144,176', s:74, e:82 },
+  {id:'got',       label:'Le Trône de Fer',        clr:'#a04040', rgb:'160,64,64',   s:82, e:100},
+];
+
+// p = % position, above = shows label above axis, tickH = tick pixel height
+const EVENTS = [
+  {era:'aube',      p:2,   date:'≈ 12 000 avC', lbl:'Premiers Hommes',          maj:true,  above:true,  tickH:90 },
+  {era:'aube',      p:5,   date:'≈ 10 000 avC', lbl:'Bras de Dorne brisé',      maj:false, above:false, tickH:30 },
+  {era:'aube',      p:7,   date:'≈ 10 000 avC', lbl:'Le Pacte',                 maj:true,  above:true,  tickH:55 },
+  {era:'heros',     p:10,  date:'≈ 9 000 avC',  lbl:'Fondation Winterfell',     maj:true,  above:false, tickH:38 },
+  {era:'heros',     p:13,  date:'≈ 8 500 avC',  lbl:'Lann le Rusé',             maj:false, above:true,  tickH:70 },
+  {era:'heros',     p:15,  date:'≈ 8 500 avC',  lbl:'Durran — Accalmie',        maj:false, above:false, tickH:28 },
+  {era:'hiver',     p:17,  date:'≈ 8 000 avC',  lbl:'Marcheurs Blancs créés',   maj:true,  above:true,  tickH:95 },
+  {era:'hiver',     p:19,  date:'≈ 8 000 avC',  lbl:'La Longue Nuit',           maj:true,  above:false, tickH:38 },
+  {era:'hiver',     p:21,  date:'≈ 8 000 avC',  lbl:'Le Mur construit',         maj:true,  above:true,  tickH:65 },
+  {era:'andal',     p:24,  date:'≈ 6 000 avC',  lbl:'Débarquement Andal',       maj:true,  above:false, tickH:38 },
+  {era:'andal',     p:29,  date:'≈ 5 500 avC',  lbl:'Nord résiste',             maj:false, above:true,  tickH:55 },
+  {era:'valyria',   p:34,  date:'≈ 5 000 avC',  lbl:'Essor de Valyria',         maj:true,  above:true,  tickH:90 },
+  {era:'valyria',   p:42,  date:'114 avC',       lbl:'Targaryen → Peyredragon', maj:true,  above:false, tickH:38 },
+  {era:'valyria',   p:44,  date:'102 avC',       lbl:'Mère des Flammes',         maj:true,  above:true,  tickH:65 },
+  {era:'conquete',  p:46,  date:'2 avC',         lbl:'Aegon débarque',           maj:true,  above:false, tickH:28 },
+  {era:'conquete',  p:47,  date:'2 avC',         lbl:'Champ de Feu',             maj:true,  above:true,  tickH:80 },
+  {era:'conquete',  p:49,  date:'1 apC',         lbl:'Couronnement Aegon Ier',   maj:true,  above:false, tickH:42 },
+  {era:'targaryen', p:52,  date:'42 apC',        lbl:'Maegor le Cruel',          maj:false, above:true,  tickH:60 },
+  {era:'targaryen', p:57,  date:'101 apC',       lbl:'Grand Conseil',            maj:true,  above:false, tickH:38 },
+  {era:'targaryen', p:61,  date:'≈ 209 apC',     lbl:'Dunk & Egg',               maj:false, above:true,  tickH:50 },
+  {era:'targaryen', p:66,  date:'262 apC',       lbl:'Aerys II — Roi Fou',       maj:true,  above:false, tickH:38 },
+  {era:'danse',     p:69,  date:'129 apC',       lbl:'Noirs vs Verts',           maj:true,  above:true,  tickH:90 },
+  {era:'danse',     p:71,  date:'130 apC',       lbl:'Lac-Œil-de-Dieu',         maj:true,  above:false, tickH:38 },
+  {era:'danse',     p:73,  date:'131 apC',       lbl:'Extinction dragons',       maj:true,  above:true,  tickH:65 },
+  {era:'rebellion', p:75,  date:'282 apC',       lbl:'Enlèvement Lyanna',        maj:true,  above:false, tickH:38 },
+  {era:'rebellion', p:78,  date:'283 apC',       lbl:'Bataille du Trident',      maj:true,  above:true,  tickH:75 },
+  {era:'rebellion', p:80,  date:'283 apC',       lbl:'Sac de Port-Réal',         maj:true,  above:false, tickH:38 },
+  {era:'got',       p:84,  date:'298 apC',       lbl:'Ned Stark exécuté',        maj:true,  above:true,  tickH:90 },
+  {era:'got',       p:87,  date:'300 apC',       lbl:'Noces Pourpres',           maj:true,  above:false, tickH:38 },
+  {era:'got',       p:91,  date:'305 apC',       lbl:'Grand Septe détruit',      maj:false, above:true,  tickH:60 },
+  {era:'got',       p:95,  date:'305 apC',       lbl:'Arya tue le Roi de la Nuit',maj:true, above:false, tickH:38 },
+  {era:'got',       p:98,  date:'305 apC',       lbl:'Bran élu roi',             maj:true,  above:true,  tickH:75 },
+];
+
+const inner = document.getElementById('friseInner');
+
+// ── Build era segments ──
+ERAS.forEach(era => {
+  const div = document.createElement('div');
+  div.className = 'era-seg';
+  div.dataset.era = era.id;
+  const x = px(era.s), w = px(era.e) - px(era.s);
+  div.style.cssText = `left:${x}px;width:${w}px;--seg-clr:${era.clr};--seg-rgb:${era.rgb}`;
+  div.innerHTML = `<div class="era-seg-fill"></div><div class="era-seg-name">${era.label}</div>`;
+  div.addEventListener('click', () => toggleEra(era.id));
+  inner.appendChild(div);
+});
+
+// ── Build event markers ──
+EVENTS.forEach(ev => {
+  const era = ERAS.find(e => e.id === ev.era);
+  const xLeft = px(ev.p) - 4;
+  const m = document.createElement('div');
+  m.dataset.era = ev.era;
+
+  if (ev.above) {
+    // Label + tick above axis, dot on axis
+    m.className = 'ev-top' + (ev.maj ? ' major' : '');
+    m.style.cssText = `left:${xLeft}px;bottom:${280-148}px;--mk-clr:${era.clr}`;
+    m.innerHTML = `
+      <div class="ev-lbl-box">
+        <span class="ev-lbl">${ev.lbl}</span>
+        <span class="ev-date">${ev.date}</span>
+      </div>
+      <div class="ev-tick" style="height:${ev.tickH}px"></div>
+      <div class="ev-dot"></div>`;
+  } else {
+    // Dot on axis, tick + label below
+    m.className = 'ev-bot' + (ev.maj ? ' major' : '');
+    m.style.cssText = `left:${xLeft}px;top:148px;--mk-clr:${era.clr}`;
+    m.innerHTML = `
+      <div class="ev-dot"></div>
+      <div class="ev-tick" style="height:${ev.tickH}px"></div>
+      <div class="ev-lbl-box">
+        <span class="ev-date">${ev.date}</span>
+        <span class="ev-lbl">${ev.lbl}</span>
+      </div>`;
+  }
+  m.addEventListener('click', () => toggleEra(ev.era));
+  inner.appendChild(m);
+});
+
+// Drag scroll
+const scroll = document.getElementById('friseScroll');
+let isDown=false, startX, sl;
+scroll.addEventListener('mousedown', e=>{isDown=true;startX=e.pageX-scroll.offsetLeft;sl=scroll.scrollLeft});
+scroll.addEventListener('mouseleave',()=>isDown=false);
+scroll.addEventListener('mouseup',  ()=>isDown=false);
+scroll.addEventListener('mousemove', e=>{
+  if(!isDown) return; e.preventDefault();
+  scroll.scrollLeft = sl - (e.pageX - scroll.offsetLeft - startX) * 1.35;
+});
+
+// Touch drag
+let tx=0, tsx=0;
+scroll.addEventListener('touchstart', e=>{tx=e.touches[0].pageX;tsx=scroll.scrollLeft},{passive:true});
+scroll.addEventListener('touchmove',  e=>{scroll.scrollLeft = tsx-(e.touches[0].pageX-tx);},{passive:true});
+
+// Filter
+let active = 'all';
+function toggleEra(era) {
+  active = (active===era) ? 'all' : era;
+  applyFilter();
+  // scroll frise to era
+  if(active!=='all'){
+    const d = ERAS.find(e=>e.id===active);
+    if(d) scroll.scrollTo({left: px(d.s)-60, behavior:'smooth'});
+    setTimeout(()=>document.getElementById('timeline').scrollIntoView({behavior:'smooth',block:'start'}),120);
+  }
+}
+
+function applyFilter(){
+  // Pills
+  document.querySelectorAll('.era-pill').forEach(p=>{
+    p.classList.toggle('active', active==='all' ? p.dataset.era==='all' : p.dataset.era===active);
+  });
+  // Frise segs
+  document.querySelectorAll('.era-seg').forEach(s=>s.classList.toggle('era-active',s.dataset.era===active));
+  // Markers
+  document.querySelectorAll('.ev-top,.ev-bot').forEach(m=>{
+    m.style.opacity = (active==='all'||m.dataset.era===active)?'1':'0.12';
+  });
+  // Vertical sections/events
+  document.querySelectorAll('.era-section').forEach(s=>s.classList.toggle('era-hidden',active!=='all'&&s.dataset.era!==active));
+  document.querySelectorAll('.event').forEach(e=>e.classList.toggle('hidden',active!=='all'&&e.dataset.era!==active));
+}
+
+// Pills click
+document.querySelectorAll('.era-pill').forEach(p=>{
+  p.addEventListener('click',()=>{ active=p.dataset.era; applyFilter();
+    if(active!=='all'){
+      const d=ERAS.find(e=>e.id===active);
+      if(d) scroll.scrollTo({left:px(d.s)-60,behavior:'smooth'});
+    }
+  });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
+},{threshold:0.08,rootMargin:'0px 0px -24px 0px'});
+document.querySelectorAll('.event').forEach((el,i)=>{ el.style.animationDelay=(i%3)*.06+'s'; obs.observe(el); });
+
+// Expand/collapse
+document.querySelectorAll('.event-card').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
+</script>
+</body>
+</html>
