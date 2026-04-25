@@ -415,6 +415,7 @@ footer{text-align:center;padding:1.4rem;color:rgba(201,168,76,.14);font-family:'
 
 /* ══ REVIEWS ══ */
 #tab-avis{display:none}
+#tab-bestiaire{display:none}
 .avis-layout{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
 .avis-hero{text-align:center;margin-bottom:2rem;padding:1.8rem 2rem;background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(139,26,26,.06));border:1px solid var(--border);border-radius:1px}
 .avis-hero h2{font-family:'Cinzel Decorative',serif;font-size:clamp(1.1rem,2.8vw,1.8rem);color:var(--gold);margin-bottom:.5rem}
@@ -641,6 +642,7 @@ textarea.avis-input{resize:vertical;min-height:90px}
   <button class="tab" onclick="switchTab('nord',this)">❄ Au-delà du Mur</button>
   <button class="tab" onclick="switchTab('resume',this)">📖 Le Trône de Fer</button>
   <button class="tab" onclick="switchTab('tv',this)">🎬 Séries TV</button>
+  <button class="tab" onclick="switchTab('bestiaire',this)">🐉 Bestiaire</button>
   <button class="tab" onclick="switchTab('avis',this)">⭐ Avis</button>
 </div>
 
@@ -1084,6 +1086,11 @@ textarea.avis-input{resize:vertical;min-height:90px}
   </div>
 </div>
 
+
+<!-- TAB BESTIAIRE -->
+<div id="tab-bestiaire" style="height:calc(100vh - 90px);overflow:hidden;margin:0;padding:0;">
+  <iframe src="bestiaire.html" style="width:100%;height:100%;border:none;display:block;" title="Bestiaire de Westeros" loading="lazy"></iframe>
+</div>
 
 <!-- TAB AVIS -->
 <div id="tab-avis">
@@ -2936,7 +2943,7 @@ function renderNord(){
 function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  ['chrono','list','map','resume','tv','feu','hotd','dunk','nord','avis'].forEach(t=>{
+  ['chrono','list','map','resume','tv','feu','hotd','dunk','nord','avis','bestiaire'].forEach(t=>{
     document.getElementById('tab-'+t).style.display=t===id?'block':'none';
   });
   document.getElementById('tab-map').style.display=id==='map'?'block':'none';

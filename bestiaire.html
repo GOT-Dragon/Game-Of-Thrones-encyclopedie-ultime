@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestiaire de Westeros — Encyclopédie Game of Thrones</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#c9a84c;--gold-l:#e8d08a;--gold-d:#7a5c1e;
+  --parch:#f2e4c0;--parch-m:#d9c48a;
+  --stone:#1a1508;--panel:rgba(20,15,5,0.97);
+  --border:rgba(201,168,76,0.2);--border-b:rgba(201,168,76,0.5);
+  /* Catégories */
+  --c-dragon:#c94c4c; --c-loup:#7ab0d4; --c-fantastique:#9a7ac9;
+  --c-animal:#7ab878; --c-naval:#5a9aaa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--stone);background-image:radial-gradient(ellipse 70% 30% at 50% 0%,rgba(140,30,30,.18) 0%,transparent 55%);min-height:100vh;font-family:'EB Garamond',serif;color:var(--parch);overflow-x:hidden}
+
+/* ── HEADER ── */
+header{text-align:center;padding:1.8rem 2rem 1.4rem;border-bottom:1px solid var(--gold-d);background:linear-gradient(180deg,rgba(80,15,15,.22) 0%,transparent 100%)}
+.site-back{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);text-decoration:none;margin-bottom:.7rem;transition:color .2s;opacity:.7}
+.site-back:hover{color:var(--gold);opacity:1}
+.orn{font-size:1.3rem;color:var(--gold-d);letter-spacing:.5em;opacity:.5;display:block;margin-bottom:.25rem}
+h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3vw,2rem);color:var(--gold);text-shadow:0 2px 28px rgba(201,168,76,.35);letter-spacing:.04em}
+.sub{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-d);margin-top:.4rem}
+
+/* ── CONTROLS ── */
+.controls{position:sticky;top:0;z-index:60;background:rgba(10,7,2,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.65rem 1.2rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:180px;max-width:280px}
+.search-wrap::before{content:'🔍';position:absolute;left:.6rem;top:50%;transform:translateY(-50%);font-size:.75rem;opacity:.35;pointer-events:none}
+#searchInput{width:100%;background:rgba(245,232,200,.05);border:1px solid var(--border);color:var(--parch);font-family:'EB Garamond',serif;font-size:.9rem;padding:.38rem .65rem .38rem 1.85rem;outline:none;border-radius:1px;transition:border-color .2s}
+#searchInput::placeholder{color:rgba(245,228,192,.2);font-style:italic}
+#searchInput:focus{border-color:var(--gold-d)}
+.controls-sep{width:1px;height:22px;background:var(--border);flex-shrink:0}
+.filter-group{display:flex;gap:.28rem;flex-wrap:wrap;align-items:center}
+.filter-label{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-d);opacity:.55;white-space:nowrap}
+.pill{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .55rem;border-radius:1px;cursor:pointer;border:1px solid transparent;background:transparent;transition:all .18s;white-space:nowrap;opacity:.5}
+.pill:hover{opacity:.85}
+.pill.active{opacity:1}
+/* series pills */
+.ps-all{color:var(--gold);border-color:var(--gold-d)}.ps-all.active{background:rgba(201,168,76,.1);border-color:var(--gold)}
+.ps-got{color:#a0c8e8;border-color:#a0c8e8}.ps-got.active{background:rgba(160,200,232,.1)}
+.ps-hotd{color:#e07070;border-color:#e07070}.ps-hotd.active{background:rgba(224,112,112,.1)}
+.ps-akotsk{color:#90c890;border-color:#90c890}.ps-akotsk.active{background:rgba(144,200,144,.1)}
+/* category pills */
+.pc-all{color:var(--gold);border-color:var(--gold-d)}.pc-all.active{background:rgba(201,168,76,.1);border-color:var(--gold)}
+.pc-dragon{color:var(--c-dragon);border-color:var(--c-dragon)}.pc-dragon.active{background:rgba(201,76,76,.1)}
+.pc-loup{color:var(--c-loup);border-color:var(--c-loup)}.pc-loup.active{background:rgba(122,176,212,.1)}
+.pc-fantastique{color:var(--c-fantastique);border-color:var(--c-fantastique)}.pc-fantastique.active{background:rgba(154,122,201,.1)}
+.pc-animal{color:var(--c-animal);border-color:var(--c-animal)}.pc-animal.active{background:rgba(122,184,120,.1)}
+.count-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.15em;color:var(--gold-d);opacity:.55;margin-left:auto;white-space:nowrap}
+
+/* ── GRID ── */
+.grid-wrap{max-width:1400px;margin:0 auto;padding:1.6rem 1.2rem 4rem}
+.category-header{display:flex;align-items:center;gap:1rem;margin:2rem 0 1rem}
+.category-header::before,.category-header::after{content:'';flex:1;height:1px}
+.category-header::before{background:linear-gradient(90deg,transparent,var(--cat-clr))}
+.category-header::after{background:linear-gradient(270deg,transparent,var(--cat-clr))}
+.cat-title{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cat-clr);white-space:nowrap;padding:0 .6rem}
+.cat-count{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.15em;color:var(--cat-clr);opacity:.5}
+
+.bestiary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:.5rem}
+
+/* ── CREATURE CARD ── */
+.creature-card{background:var(--panel);border:1px solid var(--border);border-radius:1px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
+.creature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cc-clr),transparent);opacity:.6}
+.creature-card:hover{transform:translateY(-3px);border-color:var(--cc-clr);box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.creature-card.hidden{display:none}
+
+.card-emoji{font-size:2.2rem;display:block;text-align:center;padding:1.1rem 1rem .4rem;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.card-body{padding:.5rem 1rem 1rem}
+.card-name{font-family:'Cinzel',serif;font-size:.92rem;color:var(--parch);text-align:center;margin-bottom:.3rem;line-height:1.25}
+.card-epithet{font-family:'EB Garamond',serif;font-size:.78rem;font-style:italic;color:var(--gold-d);text-align:center;margin-bottom:.6rem;opacity:.8}
+.card-tags{display:flex;flex-wrap:wrap;gap:.2rem;justify-content:center;margin-bottom:.55rem}
+.tag{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;padding:.1rem .35rem;border-radius:1px}
+.tag-series{background:rgba(245,228,192,.06);border:1px solid rgba(245,228,192,.15);color:rgba(245,228,192,.5)}
+.tag-got{background:rgba(160,200,232,.08);border:1px solid rgba(160,200,232,.25);color:#a0c8e8}
+.tag-hotd{background:rgba(224,112,112,.08);border:1px solid rgba(224,112,112,.25);color:#e07070}
+.tag-akotsk{background:rgba(144,200,144,.08);border:1px solid rgba(144,200,144,.25);color:#90c890}
+.tag-lore{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:rgba(201,168,76,.6)}
+.card-desc{font-size:.82rem;line-height:1.5;color:rgba(242,228,192,.6);text-align:center}
+.card-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:.55rem 0}
+.card-detail{font-size:.78rem;line-height:1.52;color:rgba(242,228,192,.4);font-style:italic;text-align:left}
+.card-rider{display:flex;align-items:center;gap:.35rem;justify-content:center;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cc-clr);opacity:.75;margin-top:.5rem}
+.card-rider::before,.card-rider::after{content:'—'}
+
+.card-status{position:absolute;top:.6rem;right:.6rem;width:8px;height:8px;border-radius:50%}
+.card-status.alive{background:#4a9a4a;box-shadow:0 0 6px #4a9a4a}
+.card-status.dead{background:#9a3a3a;box-shadow:0 0 6px #9a3a3a}
+.card-status.unknown{background:#7a7a4a;box-shadow:0 0 6px #7a7a4a}
+
+/* ── SIZE BADGE (dragons) ── */
+.size-badge{position:absolute;top:.55rem;left:.55rem;font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;padding:.12rem .4rem;border:1px solid var(--cc-clr);color:var(--cc-clr);opacity:.65;border-radius:1px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Empty state */
+.empty-state{text-align:center;padding:4rem 2rem;color:rgba(242,228,192,.2);font-style:italic;font-size:1rem;display:none}
+
+/* Bottom nav */
+.bottom-nav{text-align:center;padding:2rem;border-top:1px solid var(--border)}
+.btn-back{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);text-decoration:none;border:1px solid var(--border);padding:.5rem 1.3rem;transition:all .2s}
+.btn-back:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:600px){
+  .bestiary-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .controls{gap:.35rem}
+  .controls-sep{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="site-back">← Retour à l'Encyclopédie</a>
+  <span class="orn">🐉 ✦ 🐺</span>
+  <h1>Bestiaire de Westeros</h1>
+  <p class="sub">Dragons · Loups-garous · Créatures de Westeros &amp; d'Essos</p>
+</header>
+
+<!-- CONTRÔLES -->
+<div class="controls">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Rechercher une créature…" oninput="applyFilters()">
+  </div>
+  <div class="controls-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Série :</span>
+    <button class="pill ps-all active" data-series="all" onclick="setSeries(this)">Toutes</button>
+    <button class="pill ps-got" data-series="got" onclick="setSeries(this)">GoT</button>
+    <button class="pill ps-hotd" data-series="hotd" onclick="setSeries(this)">HotD</button>
+    <button class="pill ps-akotsk" data-series="akotsk" onclick="setSeries(this)">AKotSK</button>
+  </div>
+  <div class="controls-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Catégorie :</span>
+    <button class="pill pc-all active" data-cat="all" onclick="setCat(this)">Toutes</button>
+    <button class="pill pc-dragon" data-cat="dragon" onclick="setCat(this)">🐉 Dragons</button>
+    <button class="pill pc-loup" data-cat="loup" onclick="setCat(this)">🐺 Loups-garous</button>
+    <button class="pill pc-fantastique" data-cat="fantastique" onclick="setCat(this)">✨ Fantastique</button>
+    <button class="pill pc-animal" data-cat="animal" onclick="setCat(this)">🦁 Animaux</button>
+  </div>
+  <span class="count-badge" id="countBadge">— créatures</span>
+</div>
+
+<!-- GRILLE -->
+<div class="grid-wrap" id="gridWrap">
+
+  <!-- ═══════════════════ DRAGONS ═══════════════════ -->
+  <div class="category-section" data-cat="dragon">
+    <div class="category-header" style="--cat-clr:var(--c-dragon)">
+      <span class="cat-title">🐉 Dragons</span>
+    </div>
+    <div class="bestiary-grid" id="grid-dragon"></div>
+  </div>
+
+  <!-- ═══════════════════ LOUPS-GAROUS ═══════════════════ -->
+  <div class="category-section" data-cat="loup">
+    <div class="category-header" style="--cat-clr:var(--c-loup)">
+      <span class="cat-title">🐺 Loups-Garous</span>
+    </div>
+    <div class="bestiary-grid" id="grid-loup"></div>
+  </div>
+
+  <!-- ═══════════════════ FANTASTIQUE ═══════════════════ -->
+  <div class="category-section" data-cat="fantastique">
+    <div class="category-header" style="--cat-clr:var(--c-fantastique)">
+      <span class="cat-title">✨ Créatures Fantastiques</span>
+    </div>
+    <div class="bestiary-grid" id="grid-fantastique"></div>
+  </div>
+
+  <!-- ═══════════════════ ANIMAUX ═══════════════════ -->
+  <div class="category-section" data-cat="animal">
+    <div class="category-header" style="--cat-clr:var(--c-animal)">
+      <span class="cat-title">🦁 Animaux Notables</span>
+    </div>
+    <div class="bestiary-grid" id="grid-animal"></div>
+  </div>
+
+  <div class="empty-state" id="emptyState">Aucune créature trouvée pour cette recherche…</div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="btn-back">← Retour à l'Encyclopédie</a>
+</nav>
+
+<script>
+// ══════════════════════════════════════════
+// DONNÉES
+// ══════════════════════════════════════════
+const CREATURES = [
+
+  // ── DRAGONS ──────────────────────────────────────────────────
+  {
+    id:'drogon', cat:'dragon', series:['got'], emoji:'🐉', size:'Colossal',
+    name:'Drogon', epithet:'"L\'Ombre de la Terreur Noire"',
+    status:'alive',
+    rider:'Daenerys Targaryen',
+    desc:'Le plus grand et le plus sauvage des trois dragons de Daenerys, nommé en hommage à Khal Drogo. Entièrement noir, cracheur de flammes rouge sang.',
+    detail:'Survivant unique des trois dragons de Daenerys, il détruit le Trône de Fer après l\'assassinat de sa maîtresse et s\'envole vers l\'Est avec son corps. Sa couleur noire évoque Balerion le Terreur Noire.',
+    tags:['got','lore']
+  },
+  {
+    id:'rhaegal', cat:'dragon', series:['got'], emoji:'🐉', size:'Grand',
+    name:'Rhaegal', epithet:'"Le Dragon Vert"',
+    status:'dead',
+    rider:'Jon Snow (brièvement)',
+    desc:'Nommé en hommage à Rhaegar Targaryen, père de Jon Snow. Dragon vert aux écailles bronze, il est le cavalier de Jon lors de la Grande Guerre.',
+    detail:'Tué par les scorpions de la Flotte d\'Euron Greyjoy au large de Dragonstone lors de son retour vers Port-Réal. Sa mort provoque la fureur de Daenerys.',
+    tags:['got']
+  },
+  {
+    id:'viserion', cat:'dragon', series:['got'], emoji:'🐉', size:'Grand',
+    name:'Viserion', epithet:'"Le Dragon de Glace"',
+    status:'dead',
+    rider:'Roi de la Nuit',
+    desc:'Nommé en hommage à Viserys Targaryen. Crème et or à l\'origine, il est tué au-delà du Mur et ressuscité en wight dragon crachant du feu de glace bleu.',
+    detail:'Tué par le Roi de la Nuit d\'une lance de glace, puis ressuscité comme dragon-wight. Il abat le Mur de Châteaunoir avec son feu bleu et meurt lors de la Bataille de Winterfell.',
+    tags:['got']
+  },
+  {
+    id:'balerion', cat:'dragon', series:['hotd','lore'], emoji:'💀', size:'Légendaire',
+    name:'Balerion', epithet:'"Le Terreur Noire"',
+    status:'dead',
+    rider:'Aegon le Conquérant · Viserys I',
+    desc:'Le plus grand dragon de l\'histoire de Westeros. Noir comme la nuit, ses flammes dorées fondaient le fer et la pierre. Il forgea le Trône de Fer.',
+    detail:'Vivant depuis l\'Ancien Valyria, il mourut de vieillesse en 94 apC sous le règne de Jaehaerys Ier. Son crâne trône dans le château de Port-Réal. Dernier à avoir vécu à Valyria avant la Mère des Flammes.',
+    tags:['hotd','lore']
+  },
+  {
+    id:'vhagar', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Colossal',
+    name:'Vhagar', epithet:'"La Vieille Reine"',
+    status:'dead',
+    rider:'Laena Velaryon · Aemond Targaryen',
+    desc:'Second en taille après Balerion, Vhagar était l\'un des trois dragons de la Conquête d\'Aegon. Vert-bronze, immense, âgée de deux siècles pendant HotD.',
+    detail:'Compagne de la reine Visenya lors de la Conquête, elle fut plus tard montée par Laena Velaryon puis Aemond "Œil-de-Saphir". Elle tue Arrax et Lucerys au-dessus de la Baie des Naufrageurs, avant de périr avec Daemon et Caraxès au Lac-Œil-de-Dieu.',
+    tags:['hotd','lore']
+  },
+  {
+    id:'caraxes', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Très grand',
+    name:'Caraxès', epithet:'"Le Ver de Sang"',
+    status:'dead',
+    rider:'Daemon Targaryen',
+    desc:'Dragon rouge vif au corps long et serpentin, aux ailes déchiquetées. Exceptionnellement agressif, il évoque un ver ailé monstrueux.',
+    detail:'Compagnon de Daemon Targaryen pendant des décennies. Il affronte Vhagar au-dessus du Lac-Œil-de-Dieu : les deux dragons s\'entretuent dans les eaux du lac. Caraxès survit un court moment après, blessé mortellement, avant de succomber sur les rives.',
+    tags:['hotd']
+  },
+  {
+    id:'syrax', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Grand',
+    name:'Syrax', epithet:'"La Jument Jaune"',
+    status:'dead',
+    rider:'Rhaenyra Targaryen',
+    desc:'Dragon jaune doré de Rhaenyra, confinée trop souvent à Peyredragon. Nommée d\'après une déesse valyrienne.',
+    detail:'Libérée lors de la Prise des Dragons à Port-Réal, elle déclenche un massacre parmi les candidats qui tentent de la monter. Elle périt dans les combats sans cavalier, affaiblie par des années de captivité relative.',
+    tags:['hotd']
+  },
+  {
+    id:'meleys', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Grand',
+    name:'Meleys', epithet:'"L\'Écarlate"',
+    status:'dead',
+    rider:'Rhaenys Targaryen',
+    desc:'Dragon rouge vif aux cornes et crêtes roses, réputée pour sa vitesse exceptionnelle. Cavalière : Rhaenys Targaryen, la "Reine qui ne fut Jamais".',
+    detail:'Piégée à Rook\'s Rest par Aegon II et Aemond, elle affronte simultanément Vhagar et Sunfyre. Blessée mortellement, elle prend Rhaenys dans sa chute. Sunfyre sortira gravement mutilé de ce combat.',
+    tags:['hotd']
+  },
+  {
+    id:'sunfyre', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Grand',
+    name:'Sunfyre', epithet:'"Le Plus Beau de Son Époque"',
+    status:'dead',
+    rider:'Aegon II Targaryen',
+    desc:'Dragon aux écailles dorées et rose pâle, réputé le plus beau dragon de Westeros. Souffle une flamme d\'or brillant.',
+    detail:'Grièvement blessé lors de la bataille de Rook\'s Rest contre Meleys, puis à nouveau à Driftmark. C\'est lui qui dévore Rhaenyra après la reddition. Il meurt de ses blessures peu après, affaibli par des mois de combat.',
+    tags:['hotd']
+  },
+  {
+    id:'arrax', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Arrax', epithet:'"Dragon de Lucerys"',
+    status:'dead',
+    rider:'Lucerys Velaryon',
+    desc:'Petit dragon blanc gris perle de Lucerys Velaryon, encore jeune et inexpérimenté au moment de la Danse.',
+    detail:'Tué par Vhagar au-dessus de la Baie des Naufrageurs lors de la mission diplomatique de Lucerys à Accalmie. L\'attaque est déclenchée par Aemond "Œil-de-Saphir" — la mort de Lucerys enflamme définitivement la Danse des Dragons.',
+    tags:['hotd']
+  },
+  {
+    id:'vermax', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Vermax', epithet:'"Dragon de Jacaerys"',
+    status:'dead',
+    rider:'Jacaerys Velaryon',
+    desc:'Dragon vert de Jacaerys Velaryon. Compagnon du prince depuis son enfance, il l\'accompagne dans sa mission diplomatique dans le Nord.',
+    detail:'Périt lors de la Bataille des Bouchons (Gullet), submergé par des chaînes et des noyés des Triarchy. Sa mort entraîne celle de Jacaerys dans les eaux du Détroit.',
+    tags:['hotd']
+  },
+  {
+    id:'tessarion', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Tessarion', epithet:'"La Danseuse Bleue"',
+    status:'dead',
+    rider:'Daeron Targaryen',
+    desc:'Dragon bleu cobalt au ventre de bronze, remarquable pour sa grâce en vol. Cavalier : Daeron Targaryen, dit "le Vaillant".',
+    detail:'Participat aux batailles du Côte-de-l\'Aigle. Blessée lors de la Deuxième Bataille de Tumbleton, elle agonise et est achevée par une flèche de miséricorde. Daeron périt au même moment.',
+    tags:['hotd']
+  },
+  {
+    id:'seasmoke', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Moyen',
+    name:'Seasmoke', epithet:'"Le Dragon Argent"',
+    status:'dead',
+    rider:'Laenor Velaryon · Addam de Hull',
+    desc:'Dragon gris argenté aux reflets de mer. D\'abord monté par Laenor Velaryon, il choisit ensuite Addam de Hull comme cavalier des sables.',
+    detail:'Périt lors de la Première Bataille de Tumbleton en affrontant Vhagar, Tessarion et Vermithor simultanément. Addam de Hull, prouvant sa loyauté envers les Noirs, l\'y conduit au sacrifice.',
+    tags:['hotd']
+  },
+  {
+    id:'moondancer', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Moondancer', epithet:'"Dragon de Baela"',
+    status:'dead',
+    rider:'Baela Targaryen',
+    desc:'Petit dragon vert argent, encore jeune lors de la Danse. Cavalière : Baela Targaryen, fille de Daemon.',
+    detail:'Affronte Sunfyre blessé lors de la bataille de Driftmark. Moondancer périt dans le combat malgré sa bravoure contre un dragon bien plus grand. Baela survit grièvement brûlée.',
+    tags:['hotd']
+  },
+  {
+    id:'dreamfyre', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Grand',
+    name:'Dreamfyre', epithet:'"Dragon d\'Helaena"',
+    status:'dead',
+    rider:'Helaena Targaryen',
+    desc:'Dragon bleu pâle aux ailes argentées. Liée à Helaena Targaryen, prophétesse et dresseuse de vers de soie.',
+    detail:'Enchaînée dans le Dragonmont lors de la Prise des Dragons, elle est libérée par les émeutiers. Sa rage provoque un effondrement du Dragonmont qui la tue. Helaena s\'était jetée de sa fenêtre quelques jours plus tôt.',
+    tags:['hotd']
+  },
+  {
+    id:'cannibal', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Très grand',
+    name:'Le Cannibal', epithet:'"Le Dragon Sauvage"',
+    status:'unknown',
+    rider:'Aucun — indomptable',
+    desc:'Dragon sauvage noir de jais vivant depuis des générations dans les grottes de Peyredragon. Il tire son nom de son habitude de dévorer les œufs et les jeunes dragons.',
+    detail:'Le plus ancien et le plus dangereux des dragons sauvages de Peyredragon. Aucun cavalier ne put jamais l\'approcher. Son sort après la Danse reste inconnu — certains disent qu\'il survécut et disparut vers l\'Est.',
+    tags:['hotd']
+  },
+  {
+    id:'sheepstealer', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Moyen',
+    name:'Sheepstealer', epithet:'"L\'Ingrat"',
+    status:'unknown',
+    rider:'Nettles',
+    desc:'Dragon brun boueux et hostile, vivant sauvage à Peyredragon. Apprivoisé par Nettles grâce à des offrandes quotidiennes de moutons.',
+    detail:'Lié à la mystérieuse Nettles, dont on ne sait si elle avait du sang-dragon. Ils disparaissent ensemble vers l\'Est après la trahison supposée de Nettles. Leur destin reste l\'un des grands mystères de la Danse des Dragons.',
+    tags:['hotd']
+  },
+  {
+    id:'silverwing', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Grand',
+    name:'Silverwing', epithet:'"L\'Aile d\'Argent"',
+    status:'unknown',
+    rider:'Ulf White',
+    desc:'Dragon gris argenté, anciennement monté par la reine Alysanne Targaryen. Lors de la Danse, choisi par Ulf White dit "Ulf le Blanc".',
+    detail:'Survécut à la Danse des Dragons. Après la mort d\'Ulf, elle refusa tout nouveau cavalier et vécut sauvage près du lac Fishfeed pendant de nombreuses années, avant de disparaître.',
+    tags:['hotd']
+  },
+  {
+    id:'stormcloud', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Stormcloud', epithet:'"Dragon d\'Aegon le Jeune"',
+    status:'dead',
+    rider:'Aegon le Jeune (Aegon III)',
+    desc:'Très jeune dragon, monté par le petit Aegon lors de la fuite de Peyredragon après l\'exécution de Rhaenyra.',
+    detail:'Mortellement blessé lors de la fuite, il survit juste assez pour mettre Aegon en sécurité avant de succomber à ses blessures. Sa mort traumatise Aegon III, futur "Roi-Brise-Dragon" qui développe une phobie des dragons.',
+    tags:['hotd']
+  },
+  {
+    id:'shrykos', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Shrykos', epithet:'"Dragon de Jaehaerys"',
+    status:'dead',
+    rider:'Jaehaerys Targaryen (enfant)',
+    desc:'Jeune dragon affecté au prince Jaehaerys, petit-fils de Viserys I et fils d\'Aegon II. Tué lors de la Prise des Dragons.',
+    detail:'Massacré dans les fosses du Dragonmont par les émeutiers lors de la Prise des Dragons à Port-Réal, en même temps que son cavalier Jaehaerys, âgé de six ans. Cet assassinat d\'enfant choqua les deux camps.',
+    tags:['hotd']
+  },
+  {
+    id:'morghul', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Jeune',
+    name:'Morghul', epithet:'"Dragon de Jaehaera"',
+    status:'dead',
+    rider:'Jaehaera Targaryen (enfant)',
+    desc:'Jeune dragon affecté à la princesse Jaehaera, sœur jumelle de Jaehaerys. Tué lors de la Prise des Dragons.',
+    detail:'Tué en même temps que Shrykos lors des émeutes. La mort des jumeaux dans les fosses du Dragonmont scella l\'horreur de la Prise des Dragons, l\'un des actes les plus sombres de la Danse.',
+    tags:['hotd']
+  },
+  {
+    id:'vermithor', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Très grand',
+    name:'Vermithor', epithet:'"Le Vieux Roi"',
+    status:'dead',
+    rider:'Hugh Marteau',
+    desc:'Dragon bronze aux flammes d\'une chaleur extrême, anciennement monté par Jaehaerys I dit le Vieux Roi. L\'un des plus grands dragons vivant lors de la Danse.',
+    detail:'Après des décennies sans cavalier, il est conquis par Hugh Marteau, un bâtard du sang-dragon. Hugh trahit les Noirs à Tumbleton. Vermithor périt lors de la Première Bataille de Tumbleton contre Seasmoke, Tessarion et les soldats.',
+    tags:['hotd']
+  },
+  {
+    id:'greyghost', cat:'dragon', series:['hotd'], emoji:'🐉', size:'Moyen',
+    name:'Grey Ghost', epithet:'"Le Fantôme Gris"',
+    status:'dead',
+    rider:'Aucun — sauvage',
+    desc:'Dragon blanc gris pâle, timide et solitaire, vivant dans les falaises du côté sudest de Peyredragon. Évitait les hommes et les autres dragons.',
+    detail:'Tué par le Cannibal dans une confrontation dans les airs au-dessus de l\'île de Peyredragon. Sa carcasse à moitié dévorée fut retrouvée dans la mer. Sa mort contribua à la panique qui s\'empara des partisans de Rhaenyra.',
+    tags:['hotd']
+  },
+  {
+    id:'meraxes', cat:'dragon', series:['lore'], emoji:'💀', size:'Très grand',
+    name:'Meraxes', epithet:'"Dragon de Rhaenys la Reine"',
+    status:'dead',
+    rider:'Rhaenys Targaryen (la Conquérante)',
+    desc:'L\'un des trois dragons de la Conquête d\'Aegon. Nommé d\'après l\'un des dieux valyriens. Monté par la reine Rhaenys, sœur-épouse d\'Aegon.',
+    detail:'Tué à Dorne lors des Guerres de Dorne avec sa cavalière Rhaenys. Une arbalète géante de Dorne le perça dans l\'œil. Sa mort priva Aegon Ier de sa sœur et mit fin à sa tentative de conquête de Dorne.',
+    tags:['lore','hotd']
+  },
+  {
+    id:'quicksilver', cat:'dragon', series:['lore'], emoji:'💀', size:'Moyen',
+    name:'Quicksilver', epithet:'"Dragon d\'Aenys Ier"',
+    status:'dead',
+    rider:'Aenys Ier Targaryen',
+    desc:'Dragon blanc argenté d\'Aenys Ier, fils d\'Aegon le Conquérant. Réputé rapide mais moins puissant que Balerion.',
+    detail:'Affronté et tué par Balerion lors de la rébellion de Maegor contre son neveu Aenys. Balerion était bien trop grand et puissant pour Quicksilver, qui mourut avec Aenys dans cette confrontation fratricide.',
+    tags:['lore']
+  },
+  {
+    id:'dragon-egg-akotsk', cat:'dragon', series:['akotsk'], emoji:'🥚', size:'Inconnu',
+    name:'L\'Œuf de Dragon', epithet:'"Trésor de la Maison Targaryen"',
+    status:'unknown',
+    rider:'—',
+    desc:'Dans A Knight of the Seven Kingdoms, des œufs de dragons persistent comme symboles précieux de la puissance Targaryen déchue — un siècle après la quasi-extinction des dragons.',
+    detail:'À l\'époque de Dunk & Egg (209-212 apC), les dragons sont éteints depuis environ 60 ans. Les rares œufs encore existants sont des trésors dynastiques. La tentative désastreuse de les faire éclore à Summerhall (259 apC) marquera la fin tragique d\'Aegon V.',
+    tags:['akotsk','lore']
+  },
+
+  // ── LOUPS-GAROUS ──────────────────────────────────────────────────
+  {
+    id:'ghost', cat:'loup', series:['got'], emoji:'🐺', size:'Adulte',
+    name:'Ghost', epithet:'"Le Loup Blanc"',
+    status:'alive',
+    rider:'Jon Snow',
+    desc:'Loup-garou albinos aux yeux rouges de Jon Snow. Le seul pup mâle de la portée à ne pas être nommé immédiatement — comme Jon lui-même, il était l\'inattendu.',
+    detail:'Le seul des six loups-garous à survivre jusqu\'à la fin de GoT. Accompagne Jon au-delà du Mur après les événements de la saison 8. Son lien warg avec Jon est l\'un des plus forts, bien que rarement exploré dans la série TV.',
+    tags:['got']
+  },
+  {
+    id:'nymeria', cat:'loup', series:['got'], emoji:'🐺', size:'Adulte',
+    name:'Nymeria', epithet:'"La Louve d\'Arya"',
+    status:'alive',
+    rider:'Arya Stark',
+    desc:'Louve-garou gris cendré d\'Arya Stark, nommée d\'après la reine guerrière Rhoynar qui conduisit son peuple vers Dorne. Chassée sur ordre de Cersei après avoir mordu Joffrey.',
+    detail:'Envoyée dans les bois par Arya pour lui éviter la mort. Elle mène une meute sauvage dans le Conflans, guidant parfois Arya dans ses rêves wargs. Elle réapparaît brièvement en saison 7, trop sauvage pour retourner à la vie civilisée.',
+    tags:['got']
+  },
+  {
+    id:'grey-wind', cat:'loup', series:['got'], emoji:'🐺', size:'Adulte',
+    name:'Grey Wind', epithet:'"Le Loup de Robb"',
+    status:'dead',
+    rider:'Robb Stark',
+    desc:'Loup-garou gris de Robb Stark. Compagnon de guerre du Jeune Loup, sa présence sur le champ de bataille terrorisait les ennemis des Stark.',
+    detail:'Tué lors des Noces Pourpres par les hommes de Frey et Bolton, enfermé dans un chenil avant le massacre. Sa tête sera cousue au corps de Robb pour humilier les Stark. Symbole de la trahison suprême.',
+    tags:['got']
+  },
+  {
+    id:'lady', cat:'loup', series:['got'], emoji:'🐺', size:'Jeune',
+    name:'Lady', epithet:'"La Louve de Sansa"',
+    status:'dead',
+    rider:'Sansa Stark',
+    desc:'Louve-garou gris argenté de Sansa Stark, la plus douce et la plus noble de la portée. Tuée sur ordre de la reine Cersei après l\'incident de Joffrey.',
+    detail:'Exécutée par Ned Stark lui-même — pour lui épargner les mains de ceux qui la haïssent — sur ordre de Robert Baratheon, cédant aux exigences de Cersei. Sa mort annonce le destin tragique de Sansa à Port-Réal.',
+    tags:['got']
+  },
+  {
+    id:'summer', cat:'loup', series:['got'], emoji:'🐺', size:'Adulte',
+    name:'Summer', epithet:'"Le Loup de Bran"',
+    status:'dead',
+    rider:'Bran Stark',
+    desc:'Loup-garou brun gris de Bran Stark. Lié warg à Bran, Summer fut son ancre dans le monde physique pendant ses voyages spirituels.',
+    detail:'Tué par les Marcheurs Blancs lors de l\'attaque de la Caverne du Corbeau à Trois Yeux, sacrifiant sa vie pour permettre la fuite de Bran. Sa mort symbolise la fin de l\'innocence de Bran Stark.',
+    tags:['got']
+  },
+  {
+    id:'shaggydog', cat:'loup', series:['got'], emoji:'🐺', size:'Adulte',
+    name:'Shaggydog', epithet:'"Le Loup Noir"',
+    status:'dead',
+    rider:'Rickon Stark',
+    desc:'Loup-garou noir de Rickon Stark, le plus jeune et le plus sauvage des loups. Aussi imprévisible que son jeune maître.',
+    detail:'Tué par les Bolton lors de la capture de Rickon. Sa tête est présentée à Ramsay Bolton comme preuve. Le sort de Rickon (tué par Ramsay devant Jon) suivra de peu celui de son loup.',
+    tags:['got']
+  },
+
+  // ── FANTASTIQUE ──────────────────────────────────────────────────
+  {
+    id:'corbeau3yeux', cat:'fantastique', series:['got'], emoji:'🐦‍⬛', size:'Mystique',
+    name:'Le Corbeau à Trois Yeux', epithet:'"Messager des Visions"',
+    status:'dead',
+    rider:'—',
+    desc:'Entité mystique mi-homme mi-corbeau, gardien de la mémoire du monde. Il guide Bran Stark dans ses rêves wargs depuis l\'enfance.',
+    detail:'En réalité un ancien Stark transformé par les Enfants de la Forêt. Il transmet ses pouvoirs de voyant à Bran avant d\'être détruit par le Roi de la Nuit. Cette transmission fait de Bran le nouveau Corbeau à Trois Yeux.',
+    tags:['got']
+  },
+  {
+    id:'marcheurs', cat:'fantastique', series:['got'], emoji:'❄️', size:'Mystique',
+    name:'Les Marcheurs Blancs', epithet:'"Les Autres"',
+    status:'dead',
+    rider:'—',
+    desc:'Créatures de glace et de magie créées par les Enfants de la Forêt il y a 8 000 ans. Ils transforment les morts en Wights et les commandent.',
+    detail:'Leur chef, le Roi de la Nuit, fut créé en plantant un éclat de dragonglass dans le cœur d\'un Premier Homme. Tués par le dragonglass ou l\'acier valyrien. Détruits par Arya Stark lors de la Bataille de Winterfell.',
+    tags:['got']
+  },
+  {
+    id:'wights', cat:'fantastique', series:['got'], emoji:'💀', size:'Variable',
+    name:'Les Wights', epithet:'"Armée des Morts"',
+    status:'dead',
+    rider:'—',
+    desc:'Morts ressuscités par les Marcheurs Blancs. Hommes, animaux, géants — tout corps mort peut être reanimé. Yeux bleus, force surnaturelle.',
+    detail:'Vulnérables au feu et au dragonglass. Un Wight-dragon (Viserion) était capable de détruire le Mur. Tous s\'effondrent lorsque leur Marcheur Blanc créateur ou le Roi de la Nuit est tué.',
+    tags:['got']
+  },
+  {
+    id:'geants', cat:'fantastique', series:['got'], emoji:'🦣', size:'Colossal',
+    name:'Les Géants', epithet:'"Fils de la Forêt Vierge"',
+    status:'dead',
+    rider:'—',
+    desc:'Êtres humanoïdes de 4 à 6 mètres de haut, vivant au-delà du Mur. Ils parlent la Vieille Langue et coexistent avec les Sauvageons.',
+    detail:'Wun Weg Wun Dar Wun (Wun Wun) est le dernier géant connu. Il périt lors de la bataille pour reprendre Winterfell aux Bolton, abattu par des flèches après avoir enfoncé les portes. Les géants montent parfois des mammouths au combat.',
+    tags:['got']
+  },
+  {
+    id:'mammouth', cat:'fantastique', series:['got'], emoji:'🦣', size:'Colossal',
+    name:'Les Mammouths', epithet:'"Montures des Géants"',
+    status:'unknown',
+    rider:'—',
+    desc:'Mammouths laineux de grande taille utilisés comme montures de guerre par les géants au-delà du Mur. Vus lors de l\'attaque de Châteaunoir.',
+    detail:'Ils chargent les portes du Mur lors de l\'assaut Sauvageons-Marcheurs. Leur fourrure épaisse et leur taille en font des créatures redoutables. On ignore si des spécimens survivent après les événements de la série.',
+    tags:['got']
+  },
+  {
+    id:'centaures', cat:'fantastique', series:['lore'], emoji:'🐴', size:'Mystique',
+    name:'Les Êtres de la Forêt Vierge', epithet:'"Créatures Légendaires"',
+    status:'unknown',
+    rider:'—',
+    desc:'Diverses créatures mentionnées dans les légendes de Westeros : lampreys géants, serpents de mer, hommes-poissons des Îles d\'Ibben, et autres êtres dont l\'existence reste incertaine.',
+    detail:'Westeros et Essos regorgent de créatures légendaires : les Hommes-Crabes de Gogossos, les Basilics des Îles Basilic, les Enfers d\'Asshai. La réalité de ces êtres reste matière à débat entre les maesters.',
+    tags:['lore']
+  },
+  {
+    id:'krakengeant', cat:'fantastique', series:['got','lore'], emoji:'🦑', size:'Légendaire',
+    name:'Le Kraken Géant', epithet:'"Dieu des Profondeurs"',
+    status:'unknown',
+    rider:'—',
+    desc:'Créature des profondeurs marines, emblème de la Maison Greyjoy. Des témoins affirment avoir vu de vrais krakens géants attaquer des navires au large des Îles de Fer.',
+    detail:'Certains maesters estiment que les krakens géants sont bien réels mais rarissimes. La Maison Greyjoy les vénère comme représentation de leur dieu "le Noyé". Leur devise "Nous ne Semons" fait écho à leur nature prédatrice.',
+    tags:['got','lore']
+  },
+  {
+    id:'basilic', cat:'fantastique', series:['lore'], emoji:'🦎', size:'Grand',
+    name:'Les Basilics', epithet:'"Serpents des Îles"',
+    status:'unknown',
+    rider:'—',
+    desc:'Serpents reptiliens géants des Îles Basilic à l\'est d\'Essos. Dotés de pattes à la différence des dragons. Certains disent qu\'ils peuvent pétrifier par le regard.',
+    detail:'Les Îles Basilic sont réputées pour leurs créatures dangereuses. Les basilics y seraient endémiques. Si dragons et basilics partagent une lointaine origine reptilienne, les basilics sont dépourvus d\'ailes et incapables de voler.',
+    tags:['lore']
+  },
+  {
+    id:'enfants-foret', cat:'fantastique', series:['got'], emoji:'🌿', size:'Petit',
+    name:'Les Enfants de la Forêt', epithet:'"Premiers Habitants de Westeros"',
+    status:'dead',
+    rider:'—',
+    desc:'Êtres humanoïdes de petite taille, aux yeux dorés ou verts. Ils peuplaient Westeros avant l\'arrivée des Premiers Hommes. Créateurs des Marcheurs Blancs.',
+    detail:'Ils conclurent le Pacte avec les Premiers Hommes sur l\'Île aux Visages. Ce furent eux qui créèrent les Marcheurs Blancs par désespoir. Leur espèce s\'éteignit progressivement. Leaf fut l\'une des dernières. Brân les rencontra dans la Caverne du Corbeau à Trois Yeux.',
+    tags:['got']
+  },
+
+  // ── ANIMAUX ──────────────────────────────────────────────────
+  {
+    id:'corbeaux', cat:'animal', series:['got','hotd','akotsk'], emoji:'🦅',
+    name:'Les Corbeaux Messagers', epithet:'"Voix du Royaume"',
+    status:'alive',
+    rider:'—',
+    desc:'Corbeaux entraînés porteurs de messages entre les châteaux et forteresses de Westeros. La Garde de Nuit en fait un usage intensif. Châteaunoir en compte des centaines.',
+    detail:'Les maesters sont les gardiens et formateurs des corbeaux de leurs seigneurs. Certains corbeaux sont capables de parler — "Grains !" répond l\'un des corbeaux de Châteaunoir. Les corbeaux blancs de la Citadelle annoncent officiellement les changements de saison.',
+    tags:['got','hotd','akotsk']
+  },
+  {
+    id:'chevaux-dothraki', cat:'animal', series:['got'], emoji:'🐎',
+    name:'Les Destriers Dothraki', epithet:'"Chevaux des Plaines"',
+    status:'alive',
+    rider:'—',
+    desc:'Chevaux robustes et endurants des plaines de l\'Essos, élevés et dressés par les Dothraki. La cavalerie Dothraki est réputée la meilleure du monde connu.',
+    detail:'Les Dothraki vivent par et pour leurs chevaux. Un khal sans cheval n\'est plus rien. Leurs destriers sont plus petits mais infiniment plus endurants que les destriers westerosi. La cavalerie Dothraki dévasta l\'armée Lannister lors de la Bataille du Champ d\'Or.',
+    tags:['got']
+  },
+  {
+    id:'ours-combat', cat:'animal', series:['got'], emoji:'🐻',
+    name:'L\'Ours de Combat', epithet:'"Bête de l\'Arène"',
+    status:'dead',
+    rider:'—',
+    desc:'Ours géant utilisé dans l\'arène de combat de Harrenhal lors de la capture de Jaime et Brienne. Brienne y affronte l\'ours sans arme jusqu\'à l\'arrivée de Jaime.',
+    detail:'Scène iconique de la saison 3. L\'ours est finalement abattu par les archers de Locke. Les ours de combat sont une tradition dans certaines arènes de Westeros, symbole de brutalité spectaculaire.',
+    tags:['got']
+  },
+  {
+    id:'lion-lannister', cat:'animal', series:['got','hotd'], emoji:'🦁',
+    name:'Le Lion — Emblème Lannister', epithet:'"Le Lion d\'Or"',
+    status:'alive',
+    rider:'—',
+    desc:'Animal héraldique par excellence des Lannister de Castral Roc. "Entends-moi rugir" est leur devise. Des lions existent à Westeros, notamment en Essos.',
+    detail:'Des lions réels existaient historiquement à Westeros et Essos. La Maison Lannister les adopte comme symbole de puissance et d\'orgueil. Dans les tournois, les membres de la famille portent souvent des heaumes ou armures ornées de lions.',
+    tags:['got','hotd']
+  },
+  {
+    id:'cerf-baratheon', cat:'animal', series:['got'], emoji:'🦌',
+    name:'Le Cerf — Emblème Baratheon', epithet:'"La Biche Couronnée"',
+    status:'alive',
+    rider:'—',
+    desc:'Animal héraldique de la Maison Baratheon d\'Accalmie. Robert Baratheon aimait la chasse au cerf — une ironie tragique puisqu\'une blessure lors d\'une chasse au sanglier causa sa mort.',
+    detail:'Robert Baratheon meurt d\'une blessure infligée par un sanglier lors d\'une chasse, après que son écuyer Lancel Lannister l\'eut enivré de vin fort sur instruction de Cersei. La chasse, paradoxalement, tue le chasseur.',
+    tags:['got']
+  },
+  {
+    id:'pieuvre-greyjoy', cat:'animal', series:['got','hotd'], emoji:'🦑',
+    name:'La Pieuvre — Emblème Greyjoy', epithet:'"Le Kraken d\'Or"',
+    status:'alive',
+    rider:'—',
+    desc:'La pieuvre (ou kraken) est l\'emblème héraldique des Greyjoy de Pyk. Elle symbolise leur maîtrise des mers et leur nature prédatrice.',
+    detail:'Les Greyjoy règnent sur les Îles de Fer et sur les mers. Leur dieu "le Noyé" est intimement lié à l\'océan. La pieuvre d\'or sur fond noir de leur bannière illustre leur philosophie : "Nous ne Semons" — prendre aux autres plutôt que produire.',
+    tags:['got','hotd']
+  },
+  {
+    id:'faucon-arryn', cat:'animal', series:['got'], emoji:'🦅',
+    name:'Le Faucon — Emblème Arryn', epithet:'"Le Faucon du Val"',
+    status:'alive',
+    rider:'—',
+    desc:'Faucon lunaire blanc sur fond bleu ciel, emblème de la Maison Arryn du Val d\'Arryn. "Haut Comme l\'Honneur" est leur devise.',
+    detail:'Les fauconniers du Val d\'Arryn sont réputés dans tout Westeros. Leur château de l\'Aire est construit à plus de 600 mètres d\'altitude, accessible seulement par des niches creusées dans la roche — comme des nids d\'aigle.',
+    tags:['got']
+  },
+  {
+    id:'poulpe-velaryon', cat:'animal', series:['hotd'], emoji:'🐙',
+    name:'La Pieuvre — Emblème Velaryon', epithet:'"Seigneurs des Marées"',
+    status:'alive',
+    rider:'—',
+    desc:'Emblème de la puissante Maison Velaryon de Driftmark, famille de marins et amiraux. Leur flotte est la plus grande de Westeros.',
+    detail:'Les Velaryon sont d\'origine valyrienne comme les Targaryen mais sans sang-dragon suffisant pour monter des dragons... jusqu\'à certains enfants Velaryon-Targaryen de la Danse. Leur suprématie maritime en fait des alliés indispensables.',
+    tags:['hotd']
+  },
+  {
+    id:'cheval-dunk', cat:'animal', series:['akotsk'], emoji:'🐎',
+    name:'Chestnut', epithet:'"Jument de Ser Duncan"',
+    status:'unknown',
+    rider:'Ser Duncan le Grand',
+    desc:'La jument bai de Ser Duncan le Grand, chevalier errant et protagoniste de A Knight of the Seven Kingdoms. Fidèle compagne de ses pérégrinations à travers Westeros.',
+    detail:'Pour Ser Duncan, voyageur sans fortune ni château, son cheval représente sa seule richesse véritable. Perdre sa monture serait perdre son autonomie de chevalier errant. Cette relation homme-cheval reflète la réalité médiévale des voyages de l\'époque.',
+    tags:['akotsk']
+  },
+  {
+    id:'cheval-egg', cat:'animal', series:['akotsk'], emoji:'🐎',
+    name:'Monture d\'Egg', epithet:'"Destrier du Prince Secret"',
+    status:'unknown',
+    rider:'Aegon Targaryen (Egg)',
+    desc:'Cheval du jeune Aegon Targaryen, qui parcourt Westeros incognito sous le nom d\'"Egg", écuyer de Ser Duncan. Son cheval noble trahit parfois son rang.',
+    detail:'Egg cache son identité royale tout au long de leurs aventures. Son cheval, de meilleure race que ce que laisserait supposer un simple écuyer, est l\'un des indices qui auraient pu trahir sa vraie nature aux yeux d\'observateurs attentifs.',
+    tags:['akotsk']
+  },
+  {
+    id:'hippocampe', cat:'animal', series:['hotd','lore'], emoji:'🐟',
+    name:'Les Hippocampes', epithet:'"Créatures Marines Légendaires"',
+    status:'unknown',
+    rider:'—',
+    desc:'Créatures mi-cheval mi-poisson mentionnées dans les légendes des marins de Westeros et d\'Essos. Certains maesters les considèrent comme de purs mythes.',
+    detail:'Les hippocampes apparaissent dans les légendes et sur certaines décorations de navires. Qu\'ils soient réels ou non, ils symbolisent la fascination westerosi pour les abysses et les créatures inconnues des profondeurs marines.',
+    tags:['hotd','lore']
+  },
+  {
+    id:'sanglier', cat:'animal', series:['got'], emoji:'🐗',
+    name:'Le Sanglier Royal', epithet:'"Tueur de Rois"',
+    status:'dead',
+    rider:'—',
+    desc:'Sanglier ayant mortellement blessé le roi Robert Baratheon lors d\'une partie de chasse royale, précipitant la mort du souverain et les événements de la saison 1.',
+    detail:'Robert, affaibli par le vin (que Lancel Lannister lui avait versé en quantités excessives sur ordre de Cersei), fut renversé et éventré par ce sanglier. Sa blessure s\'infecta et il mourut après avoir nommé Ned Stark régent. Un simple porc changea le destin du royaume.',
+    tags:['got']
+  },
+  {
+    id:'scorpion-mantis', cat:'animal', series:['got'], emoji:'🦂',
+    name:'Les Scorpions de Guerre', epithet:'"Engins Anti-Dragons"',
+    status:'unknown',
+    rider:'—',
+    desc:'Grandes arbalètes de siège conçues par Qyburn pour abattre les dragons de Daenerys. Utilisées par la flotte d\'Euron Greyjoy pour tuer Rhaegal.',
+    detail:'Technologie militaire révolutionnaire qui change la donne face aux dragons. Qyburn les fait installer sur tous les navires et sur les remparts de Port-Réal. Leur efficacité partielle (Rhaegal tué, Drogon blessé) prouve que les dragons ne sont pas invincibles.',
+    tags:['got']
+  }
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let activeSeries = 'all';
+let activeCat    = 'all';
+const COLOR_MAP = {
+  dragon:'var(--c-dragon)', loup:'var(--c-loup)',
+  fantastique:'var(--c-fantastique)', animal:'var(--c-animal)'
+};
+
+// ══════════════════════════════════════════
+// BUILD CARDS
+// ══════════════════════════════════════════
+function buildCard(c) {
+  const clr = COLOR_MAP[c.cat] || 'var(--gold)';
+  const seriesTags = c.series.map(s => {
+    if(s==='got')    return `<span class="tag tag-got">GoT</span>`;
+    if(s==='hotd')   return `<span class="tag tag-hotd">HotD</span>`;
+    if(s==='akotsk') return `<span class="tag tag-akotsk">AKotSK</span>`;
+    if(s==='lore')   return `<span class="tag tag-lore">Lore</span>`;
+    return '';
+  }).join('');
+
+  const sizeHtml = c.size ? `<span class="size-badge">${c.size}</span>` : '';
+  const riderHtml = c.rider && c.rider !== '—' && c.rider !== 'Aucun — indomptable' && c.rider !== 'Aucun — sauvage'
+    ? `<div class="card-rider">${c.rider}</div>`
+    : (c.rider === 'Aucun — indomptable' || c.rider === 'Aucun — sauvage'
+      ? `<div class="card-rider" style="opacity:.4;font-style:italic">Indomptable</div>` : '');
+
+  return `
+    <div class="creature-card"
+         id="card-${c.id}"
+         data-cat="${c.cat}"
+         data-series="${c.series.join(' ')}"
+         data-name="${c.name.toLowerCase()} ${c.epithet ? c.epithet.toLowerCase() : ''}"
+         style="--cc-clr:${clr}"
+         onclick="this.classList.toggle('expanded')"
+         title="${c.name}">
+      <div class="card-status ${c.status}"></div>
+      ${sizeHtml}
+      <span class="card-emoji">${c.emoji}</span>
+      <div class="card-body">
+        <div class="card-name">${c.name}</div>
+        ${c.epithet ? `<div class="card-epithet">${c.epithet}</div>` : ''}
+        <div class="card-tags">${seriesTags}</div>
+        <div class="card-desc">${c.desc}</div>
+        <div class="card-divider"></div>
+        <div class="card-detail">${c.detail}</div>
+        ${riderHtml}
+      </div>
+    </div>`;
+}
+
+function renderAll() {
+  const cats = ['dragon','loup','fantastique','animal'];
+  cats.forEach(cat => {
+    const grid = document.getElementById('grid-' + cat);
+    const items = CREATURES.filter(c => c.cat === cat);
+    grid.innerHTML = items.map(buildCard).join('');
+  });
+  applyFilters();
+}
+
+// ══════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════
+function setSeries(btn) {
+  document.querySelectorAll('[data-series]').forEach(b => {
+    if(b.tagName==='BUTTON') b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  activeSeries = btn.dataset.series;
+  applyFilters();
+}
+
+function setCat(btn) {
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    if(b.tagName==='BUTTON') b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  applyFilters();
+
+  // show/hide category sections
+  document.querySelectorAll('.category-section').forEach(sec => {
+    sec.style.display = (activeCat === 'all' || sec.dataset.cat === activeCat) ? '' : 'none';
+  });
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let visible = 0;
+
+  document.querySelectorAll('.creature-card').forEach(card => {
+    const seriesOk = activeSeries === 'all' || card.dataset.series.includes(activeSeries);
+    const catOk    = activeCat === 'all' || card.dataset.cat === activeCat;
+    const nameOk   = !q || card.dataset.name.includes(q) || card.textContent.toLowerCase().includes(q);
+    const show     = seriesOk && catOk && nameOk;
+    card.classList.toggle('hidden', !show);
+    if(show) visible++;
+  });
+
+  document.getElementById('countBadge').textContent = visible + ' créature' + (visible > 1 ? 's' : '');
+  document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+
+  // hide empty category sections when filtering
+  document.querySelectorAll('.category-section').forEach(sec => {
+    if(activeCat !== 'all' && sec.dataset.cat !== activeCat) { sec.style.display='none'; return; }
+    const visibleInSec = sec.querySelectorAll('.creature-card:not(.hidden)').length;
+    sec.style.display = visibleInSec > 0 ? '' : 'none';
+  });
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
