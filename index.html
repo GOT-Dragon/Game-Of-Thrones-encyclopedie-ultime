@@ -71,8 +71,8 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.3rem,4vw,2.7rem);colo
 #si{width:100%;background:rgba(245,232,200,.04);border:1px solid var(--border);color:var(--parch);font-family:'EB Garamond',serif;font-size:.92rem;padding:.4rem .65rem .4rem 1.9rem;outline:none;border-radius:1px;transition:border-color .2s}
 #si::placeholder{color:rgba(245,228,192,.18);font-style:italic}#si:focus{border-color:var(--gold-d)}
 .pills{display:flex;gap:.25rem;flex-wrap:wrap}
-.pill{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;padding:.2rem .6rem;border:1px solid var(--border);background:transparent;color:rgba(245,228,192,.42);cursor:pointer;transition:all .2s;border-radius:1px}
-.pill:hover{border-color:var(--gold-d);color:var(--parch-m)}.pill.active{border-color:var(--gold);color:var(--gold-l);background:rgba(201,168,76,.08)}
+
+
 .ctr{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);margin-left:auto;opacity:.65;white-space:nowrap}
 /* ALPHA */
 .alpha-idx{display:flex;flex-wrap:wrap;gap:.1rem;padding:.5rem 1.4rem;border-bottom:1px solid var(--border)}
@@ -921,6 +921,111 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,3vw,2rem);color:va
 .faction-noirs{background:rgba(30,30,60,.4);border-color:rgba(100,100,180,.4);color:rgba(160,160,220,.8)}
 .faction-verts{background:rgba(20,60,20,.4);border-color:rgba(60,140,60,.4);color:rgba(100,200,100,.8)}
 .faction-sauvage{background:rgba(60,30,10,.4);border-color:rgba(150,80,30,.4);color:rgba(200,130,60,.8)}
+
+
+
+
+/* ══ PILLS MAISONS — MAJESTUEUX ═══════════════════════════════════════════ */
+.pills{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;padding:.5rem 0}
+
+/* Base commune */
+.pills button.pill{
+  font-family:'Cinzel',serif;
+  font-size:.68rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:.38rem 1rem;
+  border-width:1px;
+  border-style:solid;
+  cursor:pointer;
+  transition:all .25s ease;
+  border-radius:1px;
+  white-space:nowrap;
+  position:relative;
+  overflow:hidden;
+}
+/* Shimmer subtil au survol */
+.pills button.pill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.pills button.pill:hover::after{opacity:1}
+
+/* Tous */
+button.pill[data-h="all"]{background:rgba(201,168,76,.07);border-color:rgba(201,168,76,.35);color:rgba(201,168,76,.65);font-size:.6rem}
+button.pill[data-h="all"]:hover{background:rgba(201,168,76,.14);border-color:var(--gold);color:var(--gold)}
+button.pill[data-h="all"].active{background:rgba(201,168,76,.18);border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(201,168,76,.2)}
+
+/* ── STARK — bleu nuit, loup ── */
+button.pill[data-h="Stark"]{background:rgba(80,110,145,.16);border-color:rgba(138,180,208,.5);color:#9dc5dd;text-shadow:0 0 18px rgba(138,180,208,.3)}
+button.pill[data-h="Stark"]:hover{background:rgba(80,110,145,.28);border-color:#9dc5dd;color:#c0daea;box-shadow:0 2px 16px rgba(80,110,145,.35)}
+button.pill[data-h="Stark"].active{background:rgba(80,110,145,.35);border-color:#b8d8ea;color:#d0e8f4;box-shadow:0 0 20px rgba(80,110,145,.45),inset 0 0 8px rgba(80,110,145,.2)}
+
+/* ── LANNISTER — or impérial ── */
+button.pill[data-h="Lannister"]{background:rgba(170,140,15,.14);border-color:rgba(212,184,64,.55);color:#d4b840;text-shadow:0 0 18px rgba(212,184,64,.3)}
+button.pill[data-h="Lannister"]:hover{background:rgba(170,140,15,.28);border-color:#e0cc50;color:#f0dc70;box-shadow:0 2px 16px rgba(170,140,15,.4)}
+button.pill[data-h="Lannister"].active{background:rgba(170,140,15,.38);border-color:#f0dc70;color:#fff0a0;box-shadow:0 0 20px rgba(212,184,64,.5),inset 0 0 8px rgba(212,184,64,.2)}
+
+/* ── BARATHEON — violet cerf ── */
+button.pill[data-h="Baratheon"]{background:rgba(55,55,110,.2);border-color:rgba(130,130,200,.5);color:#9898cc;text-shadow:0 0 18px rgba(130,130,200,.25)}
+button.pill[data-h="Baratheon"]:hover{background:rgba(75,75,135,.3);border-color:#a8a8d8;color:#b8b8e0;box-shadow:0 2px 16px rgba(75,75,135,.4)}
+button.pill[data-h="Baratheon"].active{background:rgba(75,75,135,.38);border-color:#c0c0e8;color:#d0d0f0;box-shadow:0 0 20px rgba(100,100,180,.45),inset 0 0 8px rgba(100,100,180,.2)}
+
+/* ── TARGARYEN — rouge sang de dragon ── */
+button.pill[data-h="Targaryen"]{background:rgba(150,18,18,.2);border-color:rgba(200,80,80,.55);color:#d07070;text-shadow:0 0 18px rgba(200,60,60,.35)}
+button.pill[data-h="Targaryen"]:hover{background:rgba(150,18,18,.32);border-color:#e09090;color:#e8a0a0;box-shadow:0 2px 16px rgba(180,30,30,.45)}
+button.pill[data-h="Targaryen"].active{background:rgba(150,18,18,.42);border-color:#e89898;color:#f0b0b0;box-shadow:0 0 22px rgba(200,40,40,.5),inset 0 0 10px rgba(180,30,30,.25)}
+
+/* ── TULLY — bleu rivière ── */
+button.pill[data-h="Tully"]{background:rgba(15,95,115,.18);border-color:rgba(70,170,190,.5);color:#60b8cc;text-shadow:0 0 18px rgba(40,150,175,.25)}
+button.pill[data-h="Tully"]:hover{background:rgba(25,130,155,.28);border-color:#80ccd8;color:#90d8e8;box-shadow:0 2px 16px rgba(25,130,155,.4)}
+button.pill[data-h="Tully"].active{background:rgba(25,130,155,.35);border-color:#90d8e8;color:#b0e8f4;box-shadow:0 0 18px rgba(40,160,190,.45),inset 0 0 8px rgba(40,160,190,.2)}
+
+/* ── TYRELL — vert rose ── */
+button.pill[data-h="Tyrell"]{background:rgba(20,100,30,.18);border-color:rgba(80,170,90,.5);color:#70c870;text-shadow:0 0 18px rgba(50,160,60,.25)}
+button.pill[data-h="Tyrell"]:hover{background:rgba(30,140,50,.28);border-color:#90d890;color:#a0e0a0;box-shadow:0 2px 16px rgba(30,140,50,.4)}
+button.pill[data-h="Tyrell"].active{background:rgba(30,140,50,.35);border-color:#a0e0a0;color:#c0f0c0;box-shadow:0 0 18px rgba(40,170,60,.45),inset 0 0 8px rgba(40,170,60,.2)}
+
+/* ── GREYJOY — bleu gris mer ── */
+button.pill[data-h="Greyjoy"]{background:rgba(40,50,90,.2);border-color:rgba(90,110,170,.5);color:#8090c8;text-shadow:0 0 18px rgba(70,90,160,.25)}
+button.pill[data-h="Greyjoy"]:hover{background:rgba(60,80,130,.3);border-color:#a0b0d8;color:#b0c0e0;box-shadow:0 2px 16px rgba(60,80,140,.4)}
+button.pill[data-h="Greyjoy"].active{background:rgba(60,80,130,.38);border-color:#b0c0e0;color:#c8d4f0;box-shadow:0 0 18px rgba(70,90,160,.45),inset 0 0 8px rgba(70,90,160,.2)}
+
+/* ── MARTELL — orange soleil ── */
+button.pill[data-h="Martell"]{background:rgba(140,60,10,.2);border-color:rgba(200,110,30,.55);color:#d08040;text-shadow:0 0 18px rgba(200,100,20,.3)}
+button.pill[data-h="Martell"]:hover{background:rgba(180,80,15,.3);border-color:#e09850;color:#e8a860;box-shadow:0 2px 16px rgba(180,90,20,.45)}
+button.pill[data-h="Martell"].active{background:rgba(180,80,15,.38);border-color:#e8a860;color:#f0c080;box-shadow:0 0 18px rgba(200,110,20,.5),inset 0 0 8px rgba(200,110,20,.22)}
+
+/* ── FREY — gris trahison ── */
+button.pill[data-h="Frey"]{background:rgba(70,70,50,.22);border-color:rgba(120,120,80,.5);color:#a0a070}
+button.pill[data-h="Frey"]:hover{background:rgba(100,100,70,.3);border-color:#b8b890;color:#c0c0a0;box-shadow:0 2px 14px rgba(100,100,60,.35)}
+button.pill[data-h="Frey"].active{background:rgba(100,100,70,.38);border-color:#c0c0a0;color:#d8d8c0;box-shadow:0 0 14px rgba(120,120,70,.4)}
+
+/* ── GARDE DE NUIT — noir charbon ── */
+button.pill[data-h="GardeNuit"]{background:rgba(30,30,30,.5);border-color:rgba(100,100,100,.5);color:#b0b0b0}
+button.pill[data-h="GardeNuit"]:hover{background:rgba(60,60,60,.5);border-color:#c0c0c0;color:#d0d0d0;box-shadow:0 2px 14px rgba(0,0,0,.5)}
+button.pill[data-h="GardeNuit"].active{background:rgba(70,70,70,.55);border-color:#d0d0d0;color:#e8e8e8;box-shadow:0 0 16px rgba(150,150,150,.3)}
+
+/* ── FEU & SANG — orangé ── */
+button.pill[data-h="FeuSang"]{background:rgba(180,80,10,.18);border-color:rgba(220,130,30,.55);color:#e08840;text-shadow:0 0 18px rgba(220,120,20,.3)}
+button.pill[data-h="FeuSang"]:hover{background:rgba(200,100,15,.28);border-color:#e8a050;color:#f0b860;box-shadow:0 2px 16px rgba(200,100,15,.45)}
+button.pill[data-h="FeuSang"].active{background:rgba(200,100,15,.36);border-color:#f0b860;color:#ffd080;box-shadow:0 0 20px rgba(220,130,20,.5),inset 0 0 8px rgba(220,130,20,.2)}
+
+/* ── HOUSE OF THE DRAGON — rose Targaryen ── */
+button.pill[data-h="HotD"]{background:rgba(150,30,80,.18);border-color:rgba(210,70,130,.5);color:#c06090;text-shadow:0 0 18px rgba(200,60,120,.3)}
+button.pill[data-h="HotD"]:hover{background:rgba(180,40,100,.28);border-color:#d880a8;color:#e098b8;box-shadow:0 2px 16px rgba(180,40,100,.45)}
+button.pill[data-h="HotD"].active{background:rgba(180,40,100,.35);border-color:#e898c0;color:#f0b0d0;box-shadow:0 0 20px rgba(200,50,120,.5),inset 0 0 8px rgba(200,50,120,.22)}
+
+/* ── CHEVALIER ERRANT — vert olive ── */
+button.pill[data-h="ChevErrant"]{background:rgba(80,110,30,.18);border-color:rgba(140,170,60,.5);color:#a8c870;text-shadow:0 0 16px rgba(130,160,50,.25)}
+button.pill[data-h="ChevErrant"]:hover{background:rgba(110,145,40,.28);border-color:#c0d880;color:#c8e090;box-shadow:0 2px 14px rgba(120,155,40,.4)}
+button.pill[data-h="ChevErrant"].active{background:rgba(110,145,40,.35);border-color:#c8e090;color:#d8f0a8;box-shadow:0 0 16px rgba(140,170,50,.45)}
+
+/* ── AUTRES ── */
+button.pill[data-h="Autre"]{background:rgba(55,45,25,.22);border-color:rgba(110,85,45,.45);color:#b0904a}
+button.pill[data-h="Autre"]:hover{background:rgba(80,65,35,.3);border-color:#c8a858;color:#c8a858;box-shadow:0 2px 12px rgba(80,65,35,.35)}
+button.pill[data-h="Autre"].active{background:rgba(80,65,35,.38);border-color:#d0b060;color:#e0c070;box-shadow:0 0 14px rgba(130,100,40,.4)}
 
 </style>
 </head>
